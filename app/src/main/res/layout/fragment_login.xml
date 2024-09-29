@@ -1,0 +1,70 @@
+<?xml version = "1.0" encoding = "utf-8"?>
+<ScrollView>
+    <LinearLayout xmlns:android:orientation="vertical"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+        <TextView
+            android:text="@string/login_title"
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"/>
+        <TextView android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Remaining Attempts"
+            android:visibility="gone" />
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Username" />
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Remaining Attempts"
+            android:visibility="gone" />
+        <EditText . . . />
+        <Button . . . />
+        <Button . . . />
+        <Button . . . />
+    </LinearLayout>
+</ScrollView>
+
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <EditText
+        android:id="@+id/editText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Username" />
+
+    <EditText
+        android:id="@+id/editText2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="Password"
+        android:inputType="textPassword" />
+
+    <Button
+        android:id="@+id/button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Login" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Exit" />
+
+    <TextView
+        android:id="@+id/textView3"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Remaining Attempts"
+        android:visibility="gone" />
+</LinearLayout>
