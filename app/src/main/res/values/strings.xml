@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">ScheduleMaster</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="login_page_1">ScheduleMaster</string>
+    <string name="login_page_2">Organize your schedule with ease</string>
 </resources>
