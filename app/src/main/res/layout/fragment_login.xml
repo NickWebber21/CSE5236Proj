@@ -6,12 +6,16 @@
     tools:context=".LoginFragment">
 
     <!-- TODO: Update blank fragment layout -->
-
+    <!-- this is updating the blank fragment layout si that fragment_container
+        can get referenced to in LoginActivity.kt -->
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_margin="@android:dimen/app_icon_size"
         android:orientation="vertical">
 
         <TextView
@@ -28,14 +32,44 @@
             android:text="@string/login_page_2"
             android:textAlignment="center" />
 
-        <Button
+        <EditText
+            android:id="@+id/usernameText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Login" />
+            android:hint="Username"
+            android:inputType="text" />
 
-        <Button
+        <EditText
+            android:id="@+id/passwordText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Create an account" />
+            android:hint="Password"
+            android:inputType="text" />
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center">
+
+            <Button
+                android:id="@+id/loginButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:text="Login"/>
+
+
+            <Button
+                android:id="@+id/createAccountButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom|center"
+                android:text="Create an account" />
+
+        </LinearLayout>
+
     </LinearLayout>
+
 </FrameLayout>
