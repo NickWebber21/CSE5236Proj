@@ -52,6 +52,7 @@ android {
 dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.recyclerview)
+    implementation(libs.androidx.room.common)
     val fragment_version = "1.8.4"
 
     // Java language implementation

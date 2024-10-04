@@ -44,6 +44,7 @@ class LoginFragment : Fragment() {
         val v: View
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_login, container, false)
+        Log.d("INSIDE LoginFragment.kt", "onCreateView() called.  View created.")
 
         // references to the ui elements specified in XML
         mEditUsernameText = v.findViewById(R.id.usernameText)

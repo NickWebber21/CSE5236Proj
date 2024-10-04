@@ -1,6 +1,7 @@
 package com.example.schedulemaster
 
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
@@ -17,6 +18,7 @@ class LoginActivity : AppCompatActivity() {
             fm.beginTransaction()
                 .add(R.id.fragment_container, fragment)
                 .commit()
+            Log.d("INSIDE LoginActivity.kt", "login Fragment added to container ID: ${R.id.fragment_container}")
         }
     }
 }
