@@ -4,9 +4,13 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.EditText
 import androidx.appcompat.app.AppCompatActivity
+import android.util.Log
 
 class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val tag = "OnCreate"
+        Log.i(tag, "-----------------------NEW LOG---------------------")
+        Log.i(tag, "onCreate activity started.")
         super.onCreate(savedInstanceState)
         setContentView(R.layout.fragment_login)
         val fm = supportFragmentManager // get instance of fragment manager to create fragment transaction
