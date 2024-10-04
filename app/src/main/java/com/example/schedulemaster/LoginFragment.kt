@@ -42,6 +42,9 @@ class LoginFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val v: View
+        val tag = "OnCreateView"
+        Log.i(tag, "-----------------------NEW LOG---------------------")
+        Log.i(tag, "onCreateView fragment started.")
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_login, container, false)
 
