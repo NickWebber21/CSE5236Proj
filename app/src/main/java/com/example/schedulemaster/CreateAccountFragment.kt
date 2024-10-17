@@ -59,7 +59,6 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.createButton -> {
-                Log.d("INSIDE CreateAccount.kt", "creating account")
                 Toast.makeText(requireContext(), "create account button clicked", Toast.LENGTH_SHORT).show()
                 val id = mEditIDText.text.toString()
                 val text = mEditTextText.text.toString()
