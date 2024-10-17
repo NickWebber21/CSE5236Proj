@@ -1,18 +1,20 @@
 package com.example.schedulemaster
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
-import android.widget.TextView
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import com.google.firebase.database.ValueEventListener
+
 
 // TODO: Rename parameter arguments, choose names that match
 // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -30,6 +32,8 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
     private lateinit var mEditTextText: EditText
     private lateinit var mCreateButton: Button
     private lateinit var mDeleteButton: Button
+    private lateinit var mUpdateButton: Button
+    private lateinit var mReadButton: Button
     private lateinit var databaseRef: DatabaseReference
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,6 +58,11 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
         mCreateButton.setOnClickListener(this)
         mDeleteButton = v.findViewById(R.id.deleteButton)
         mDeleteButton.setOnClickListener(this)
+        mUpdateButton = v.findViewById(R.id.updateButton)
+        mUpdateButton.setOnClickListener(this)
+        mReadButton = v.findViewById(R.id.readButton)
+        mReadButton.setOnClickListener(this)
+
         return v;
     }
     override fun onClick(v: View) {
@@ -85,6 +94,53 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
                 mEditIDText.text.clear()
                 mEditTextText.text.clear()
                 Toast.makeText(requireContext(), "Data Deleted!", Toast.LENGTH_SHORT).show()
+            }
+            R.id.updateButton -> {
+                Log.d("INSIDE CreateAccount.kt", "updating account")
+                Toast.makeText(requireContext(), "update account button clicked", Toast.LENGTH_SHORT).show()
+                val id = mEditIDText.text.toString()
+                val text = mEditTextText.text.toString()
+
+                databaseRef = FirebaseDatabase.getInstance().getReference("Test Data")
+                val data = testData(id,text)
+                databaseRef.child(id).setValue(data)
+
+                mEditIDText.text.clear()
+                mEditTextText.text.clear()
+                Toast.makeText(requireContext(), "Data updated!", Toast.LENGTH_SHORT).show()
+            }
+            R.id.readButton -> {
+                Log.d("INSIDE CreateAccount.kt", "creating account")
+                Toast.makeText(requireContext(), "create account button clicked", Toast.LENGTH_SHORT).show()
+                val id = mEditIDText.text.toString()
+
+                databaseRef = FirebaseDatabase.getInstance().getReference("Test Data")
+                mEditTextText.text.clear()
+
+
+                // Read from the database
+                databaseRef.addValueEventListener(object : ValueEventListener {
+                    override fun onDataChange(dataSnapshot: DataSnapshot) {
+                        // This method is called once with the initial value and again
+                        // whenever data at this location is updated.
+                        val value = dataSnapshot.child(id).value
+                        if(value is HashMap<*, *>){
+                            mEditTextText.text.append(value.get("text").toString())
+                        }
+                    }
+
+                    override fun onCancelled(error: DatabaseError) {
+                        // Failed to read value
+                    }
+                })
+
+
+
+                //(databaseRef.child(id).)//values<testData>().toString())
+
+                //mEditIDText.text.clear()
+                //mEditTextText.text.clear()
+                Toast.makeText(requireContext(), "Data Read!", Toast.LENGTH_SHORT).show()
             }
             else -> Log.e("INSIDE LoginFragment.kit", "Error: Invalid button press")
         }
