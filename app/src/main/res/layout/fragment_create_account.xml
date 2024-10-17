@@ -9,32 +9,74 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:padding="16dp"
+        android:gravity="center_horizontal">
 
-        <!-- Username Field -->
+        <!-- ID Field -->
         <EditText
-            android:id="@+id/usernameEditText"
+            android:id="@+id/idEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
-            android:inputType="text" />
+            android:hint="ID"
+            android:inputType="number"
+            android:padding="12dp"
+            android:layout_marginBottom="12dp" />
 
-        <!-- Password Field -->
+        <!-- Text Field -->
         <EditText
-            android:id="@+id/passwordEditText"
+            android:id="@+id/textEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Password"
-            android:inputType="textPassword"
-            android:layout_marginTop="8dp" />
+            android:hint="Text"
+            android:inputType="text"
+            android:padding="12dp"
+            android:layout_marginBottom="16dp" />
+        <!-- Horizontal Layout for Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center"
+            android:layout_marginTop="16dp"
+            android:weightSum="4">
 
-        <!-- Create Account Button -->
-        <Button
-            android:id="@+id/createAccountButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Create Account"
-            android:layout_marginTop="16dp" />
+            <!-- Create Button -->
+            <Button
+                android:id="@+id/createButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Create"
+                android:layout_weight="1"
+                android:layout_margin="4dp" />
+
+            <!-- Update Button -->
+            <Button
+                android:id="@+id/updateButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Update"
+                android:layout_weight="1"
+                android:layout_margin="4dp" />
+
+            <!-- Delete Button -->
+            <Button
+                android:id="@+id/deleteButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Delete"
+                android:layout_weight="1"
+                android:layout_margin="4dp" />
+
+            <!-- Read Button -->
+            <Button
+                android:id="@+id/readButton"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Read"
+                android:layout_weight="1"
+                android:layout_margin="4dp" />
+
+        </LinearLayout>
 
     </LinearLayout>
 </FrameLayout>
