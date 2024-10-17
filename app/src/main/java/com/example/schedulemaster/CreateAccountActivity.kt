@@ -1,7 +1,9 @@
 package com.example.schedulemaster
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
+import androidx.appcompat.app.AppCompatActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,35 +15,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.schedulemaster.ui.theme.ScheduleMasterTheme
 
-class CreateAccountActivity : ComponentActivity() {
+class CreateAccountActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        val tag = "OnCreate"
+        Log.i(tag, "-----------------------NEW LOG---------------------")
+        Log.i(tag, "onCreate activity started.")
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        setContent {
-            ScheduleMasterTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    Greeting(
-                        name = "Android",
-                        modifier = Modifier.padding(innerPadding)
-                    )
-                }
-            }
+        setContentView(R.layout.activity_fragment)
+        val fm = supportFragmentManager
+        var fragment = fm.findFragmentById(R.id.fragment_container)
+        // add login fragment to container
+        if (fragment == null) {
+            fragment = CreateAccountFragment()
+            fm.beginTransaction()
+                .add(R.id.fragment_container, fragment)
+                .commit()
         }
-    }
-}
-
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    ScheduleMasterTheme {
-        Greeting("Android")
     }
 }

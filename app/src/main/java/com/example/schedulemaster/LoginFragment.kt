@@ -1,7 +1,8 @@
 package com.example.schedulemaster
 
+import android.content.Intent
 import android.os.Bundle
-import android.util.Log // used to log errors
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -24,11 +25,6 @@ class LoginFragment : Fragment(), View.OnClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         // dont have any params at the moment
-
-        /*arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }*/
     }
 
     override fun onCreateView(
@@ -63,11 +59,10 @@ class LoginFragment : Fragment(), View.OnClickListener {
             }
             R.id.createAccountButton -> {
                 // do stuff with FireBase for when create account button is clicked
-                val username = mEditUsernameText.text.toString().trim()
-                val password = mEditPasswordText.text.toString().trim()
-                Log.d("INSIDE LoginFragment.kt", "creating account with the username entered: $username and password: $password")
+                Log.d("INSIDE LoginFragment.kt", "creating account")
                 Toast.makeText(requireContext(), "create account button clicked", Toast.LENGTH_SHORT).show()
-
+                val intent = Intent(requireContext(), CreateAccountActivity::class.java)
+                startActivity(intent);
             }
             else -> Log.e("INSIDE LoginFragment.kit", "Error: Invalid button press")
         }
