@@ -1,4 +1,4 @@
-package com.example.schedulemaster
+package com.example.schedulemaster.ui.fragment
 
 import android.os.Bundle
 import android.util.Log
@@ -9,17 +9,13 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import com.example.schedulemaster.R
+import com.example.schedulemaster.model.testData
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-
-
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
 
 /**
  * A simple [Fragment] subclass.
@@ -69,12 +65,16 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
         when (v.id) {
             R.id.createButton -> {
                 Log.d("INSIDE CreateAccount.kt", "creating account")
-                Toast.makeText(requireContext(), "create account button clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "create account button clicked",
+                    Toast.LENGTH_SHORT
+                ).show()
                 val id = mEditIDText.text.toString()
                 val text = mEditTextText.text.toString()
 
                 databaseRef = FirebaseDatabase.getInstance().getReference("Test Data")
-                val data = testData(id,text)
+                val data = testData(id, text)
                 databaseRef.child(id).setValue(data)
 
                 mEditIDText.text.clear()
@@ -84,7 +84,11 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
 
             R.id.deleteButton -> {
                 Log.d("INSIDE CreateAccount.kt", "creating account")
-                Toast.makeText(requireContext(), "create account button clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "create account button clicked",
+                    Toast.LENGTH_SHORT
+                ).show()
                 val id = mEditIDText.text.toString()
                 val text = mEditTextText.text.toString()
 
@@ -97,12 +101,16 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
             }
             R.id.updateButton -> {
                 Log.d("INSIDE CreateAccount.kt", "updating account")
-                Toast.makeText(requireContext(), "update account button clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "update account button clicked",
+                    Toast.LENGTH_SHORT
+                ).show()
                 val id = mEditIDText.text.toString()
                 val text = mEditTextText.text.toString()
 
                 databaseRef = FirebaseDatabase.getInstance().getReference("Test Data")
-                val data = testData(id,text)
+                val data = testData(id, text)
                 databaseRef.child(id).setValue(data)
 
                 mEditIDText.text.clear()
@@ -111,7 +119,11 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
             }
             R.id.readButton -> {
                 Log.d("INSIDE CreateAccount.kt", "creating account")
-                Toast.makeText(requireContext(), "create account button clicked", Toast.LENGTH_SHORT).show()
+                Toast.makeText(
+                    requireContext(),
+                    "create account button clicked",
+                    Toast.LENGTH_SHORT
+                ).show()
                 val id = mEditIDText.text.toString()
 
                 databaseRef = FirebaseDatabase.getInstance().getReference("Test Data")
