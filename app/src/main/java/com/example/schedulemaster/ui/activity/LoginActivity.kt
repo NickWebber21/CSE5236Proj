@@ -1,12 +1,16 @@
 package com.example.schedulemaster.ui.activity
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.util.Log
+import androidx.fragment.app.Fragment
 import com.example.schedulemaster.ui.fragment.LoginFragment
 import com.example.schedulemaster.R
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : SingleFragmentActivity() {
+    override fun createFragment(): Fragment {
+        return LoginFragment()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val tag = "OnCreate"
         Log.i(tag, "-----------------------NEW LOG---------------------")
