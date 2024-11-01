@@ -1,6 +1,7 @@
 package com.example.schedulemaster.ui.activity
 
 import android.os.Bundle
+import android.util.Log
 import androidx.annotation.LayoutRes
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
@@ -15,6 +16,9 @@ abstract class SingleFragmentActivity : AppCompatActivity() {
         get() = R.layout.activity_fragment
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        val tag = "OnCreate"
+        Log.i(tag, "-----------------------NEW LOG---------------------")
+        Log.i(tag, "onCreate activity started.")
         super.onCreate(savedInstanceState)
         setContentView(layoutResId)
 
