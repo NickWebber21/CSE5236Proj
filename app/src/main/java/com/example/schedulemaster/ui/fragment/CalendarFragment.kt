@@ -15,7 +15,7 @@ class CalendarFragment : Fragment(), View.OnClickListener  {
         return super.onCreateView(inflater, container, savedInstanceState)
     }
 
-    override fun onClick(p0: View?) {
+    override fun onClick(v: View) {
         TODO("Not yet implemented")
     }
 }
