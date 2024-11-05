@@ -1,36 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".ui.fragment.LoginFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <!-- this is updating the blank fragment layout si that fragment_container
-        can get referenced to in LoginActivity.kt -->
-    <FrameLayout
-        android:id="@+id/fragment_container"
+    <ImageView
+        android:id="@+id/welcomeImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="wrap_content"
+        android:padding="16dp"
+        tools:srcCompat="@tools:sample/avatars" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/welcomeImage"
         android:orientation="vertical">
 
         <TextView
+            android:id="@+id/scheduleMasterHead"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/login_page_1"
             android:textAlignment="center"
             android:textSize="34sp"
             android:textStyle="bold" />
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="@string/login_page_2"
-            android:textAlignment="center" />
 
         <EditText
             android:id="@+id/usernameText"
@@ -46,30 +41,14 @@
             android:hint="Password"
             android:inputType="text" />
 
-
-        <LinearLayout
+        <Button
+            android:id="@+id/loginButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:gravity="center">
+            android:layout_gravity="bottom|center"
+            android:text="Sign In"/>
 
-            <Button
-                android:id="@+id/loginButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:text="Login"/>
-
-
-            <Button
-                android:id="@+id/createAccountButton"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_gravity="bottom|center"
-                android:text="Create an account" />
-
-        </LinearLayout>
 
     </LinearLayout>
 
-</FrameLayout>
+</RelativeLayout>

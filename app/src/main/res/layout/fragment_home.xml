@@ -1,7 +1,31 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/textView2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TextView" />
+
+    <Button
+        android:id="@+id/AddTaskButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Add Task" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/TodaysTasks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:id="@+id/PlaceHolder"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Maybe put a fragment container view here for the calendar fragment or something not sure yet." />
 
 </LinearLayout>
+    <!-- TODO: add the welcome page stuff and login button and create account button -->
