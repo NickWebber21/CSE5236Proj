@@ -1,82 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.CreateAccountFragment">
+    tools:context=".ui.fragment.LoginFragment">
 
-    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    <ImageView
+        android:id="@+id/welcomeImage"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
+        android:layout_height="wrap_content"
         android:padding="16dp"
-        android:gravity="center_horizontal">
+        tools:srcCompat="@tools:sample/avatars" />
 
-        <!-- ID Field -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/welcomeImage"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/scheduleMasterHead"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/login_page_1"
+            android:textAlignment="center"
+            android:textSize="34sp"
+            android:textStyle="bold" />
+
         <EditText
-            android:id="@+id/idEditText"
+            android:id="@+id/usernameText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="ID"
-            android:inputType="number"
-            android:padding="12dp"
-            android:layout_marginBottom="12dp" />
+            android:hint="Username"
+            android:inputType="text" />
 
-        <!-- Text Field -->
         <EditText
-            android:id="@+id/textEditText"
+            android:id="@+id/passwordText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Text"
-            android:inputType="text"
-            android:padding="12dp"
-            android:layout_marginBottom="16dp" />
-        <!-- Horizontal Layout for Buttons -->
-        <LinearLayout
+            android:hint="Password"
+            android:inputType="text" />
+
+        <Button
+            android:id="@+id/createAccountButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:gravity="center"
-            android:layout_marginTop="16dp"
-            android:weightSum="4">
+            android:layout_gravity="bottom|center"
+            android:text="Create Account"/>
 
-            <!-- Create Button -->
-            <Button
-                android:id="@+id/createButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Create"
-                android:layout_weight="1"
-                android:layout_margin="4dp" />
-
-            <!-- Update Button -->
-            <Button
-                android:id="@+id/updateButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Update"
-                android:layout_weight="1"
-                android:layout_margin="4dp" />
-
-            <!-- Delete Button -->
-            <Button
-                android:id="@+id/deleteButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Delete"
-                android:layout_weight="1"
-                android:layout_margin="4dp" />
-
-            <!-- Read Button -->
-            <Button
-                android:id="@+id/readButton"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:text="Read"
-                android:layout_weight="1"
-                android:layout_margin="4dp" />
-
-        </LinearLayout>
 
     </LinearLayout>
-</FrameLayout>
+
+</RelativeLayout>
