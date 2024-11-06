@@ -11,21 +11,19 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
 import com.example.schedulemaster.R
-import com.example.schedulemaster.ui.activity.LoginActivity
+import com.example.schedulemaster.ui.activity.HomeActivity
+import com.google.firebase.auth.FirebaseAuth
 
-/**
- * A simple [Fragment] subclass.
- * Use the [LoginFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class LoginFragment : Fragment(), View.OnClickListener {
+
     private lateinit var mEditUsernameText: EditText
     private lateinit var mEditPasswordText: EditText
     private lateinit var mLoginButton: Button
+    private lateinit var auth: FirebaseAuth
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        // dont have any params at the moment
+        auth = FirebaseAuth.getInstance()
     }
 
     override fun onCreateView(
@@ -33,12 +31,10 @@ class LoginFragment : Fragment(), View.OnClickListener {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        val v = inflater.inflate(R.layout.fragment_login, container, false) // view
-        val tag = "OnCreateView"
-        Log.i(tag, "-----------------------NEW LOG---------------------")
-        Log.i(tag, "onCreateView fragment started.")
+        val v = inflater.inflate(R.layout.fragment_login, container, false)
+        Log.i("LoginFragment", "onCreateView fragment started.")
 
-        // references to the ui elements specified in XML
+        // UI element references
         mEditUsernameText = v.findViewById(R.id.usernameText)
         mEditPasswordText = v.findViewById(R.id.passwordText)
         mLoginButton = v.findViewById(R.id.loginButton)
@@ -50,13 +46,32 @@ class LoginFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.loginButton -> {
-                // do stuff with FireBase when login button is clicked
                 val username = mEditUsernameText.text.toString().trim()
                 val password = mEditPasswordText.text.toString().trim()
-                Log.d("INSIDE LoginFragment.kt", "logging in with the username entered: $username and password: $password")
-                Toast.makeText(requireContext(), "login button clicked", Toast.LENGTH_SHORT).show()
+
+                if (username.isNotEmpty() && password.isNotEmpty()) {
+                    signIn(username, password)
+                } else {
+                    Toast.makeText(requireContext(), "Please enter email and password", Toast.LENGTH_SHORT).show()
+                }
             }
-            else -> Log.e("INSIDE LoginFragment.kt", "Error: Invalid button press")
+            else -> Log.e("LoginFragment", "Error: Invalid button press")
         }
+    }
+
+    private fun signIn(email: String, password: String) {
+        auth.signInWithEmailAndPassword(email, password)
+            .addOnCompleteListener(requireActivity()) { task ->
+                if (task.isSuccessful) {
+                    // Login successful
+                    Toast.makeText(requireContext(), "Login successful", Toast.LENGTH_SHORT).show()
+                    val intent = Intent(requireContext(), HomeActivity::class.java)
+                    startActivity(intent)
+                } else {
+                    // Login failed, show error message
+                    Log.e("LoginFragment", "Login failed: ${task.exception?.message}")
+                    Toast.makeText(requireContext(), "Login failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
+                }
+            }
     }
 }
