@@ -55,6 +55,7 @@ dependencies {
     implementation(libs.androidx.recyclerview)
     implementation(libs.firebase.database)
     implementation(libs.firebase.database.ktx)
+    implementation(libs.firebase.auth)
     val fragment_version = "1.8.4"
 
     // Java language implementation
