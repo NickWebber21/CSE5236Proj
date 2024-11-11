@@ -6,4 +6,18 @@
     <string name="create_account">Create Your Account</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <string-array name="priority_options">
+        <item>Low</item>
+        <item>Medium</item>
+        <item>High</item>
+    </string-array>
+
+    <string-array name="category_options">
+        <item>Work</item>
+        <item>Personal</item>
+        <item>Study</item>
+        <item>Fitness</item>
+        <item>Other</item>
+    </string-array>
 </resources>
