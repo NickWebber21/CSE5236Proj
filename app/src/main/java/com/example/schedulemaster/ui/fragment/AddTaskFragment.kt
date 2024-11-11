@@ -1,20 +1,18 @@
 package com.example.schedulemaster.ui.fragment
 
-import android.content.Intent
+import android.app.DatePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
+import android.widget.*
 import androidx.fragment.app.Fragment
 import com.example.schedulemaster.R
-import com.example.schedulemaster.ui.activity.HomeActivity
-import com.example.schedulemaster.ui.activity.LoginActivity
-import android.widget.*
+import com.example.schedulemaster.model.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import com.example.schedulemaster.model.Task
+import java.util.*
 
 class AddTaskFragment : Fragment(), View.OnClickListener {
 
@@ -52,6 +50,11 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         // Set up onClick listeners for buttons
         submitButton.setOnClickListener(this)
         homeButton.setOnClickListener(this)
+
+        // Set up DatePicker for date input
+        dateInput.setOnClickListener {
+            showDatePickerDialog()
+        }
 
         return view
     }
@@ -95,5 +98,23 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     private fun navigateToHome() {
         // Logic to navigate back to the home screen
         Toast.makeText(requireContext(), "Navigating to Home", Toast.LENGTH_SHORT).show()
+    }
+
+    private fun showDatePickerDialog() {
+        val calendar = Calendar.getInstance()
+        val year = calendar.get(Calendar.YEAR)
+        val month = calendar.get(Calendar.MONTH)
+        val day = calendar.get(Calendar.DAY_OF_MONTH)
+
+        val datePickerDialog = DatePickerDialog(
+            requireContext(),
+            { _, selectedYear, selectedMonth, selectedDay ->
+                // Format the selected date as you prefer (e.g., dd/MM/yyyy)
+                val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
+                dateInput.setText(formattedDate)
+            },
+            year, month, day
+        )
+        datePickerDialog.show()
     }
 }
