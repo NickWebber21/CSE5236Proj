@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
 import com.example.schedulemaster.R
+import com.example.schedulemaster.model.Category
+import com.example.schedulemaster.model.Priority
 import com.example.schedulemaster.model.Task
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
@@ -63,6 +65,24 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             showTimePickerDialog()
         }
 
+        // Set up the adapter for the priority spinner
+        val priorityAdapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.priority_options,
+            android.R.layout.simple_spinner_item
+        )
+        priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        prioritySpinner.adapter = priorityAdapter
+
+        // Set up the category spinner
+        val categoryAdapter = ArrayAdapter.createFromResource(
+            requireContext(),
+            R.array.category_options,
+            android.R.layout.simple_spinner_item,
+        )
+        categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+        categorySpinner.adapter = categoryAdapter
+
         return view
     }
 
@@ -81,8 +101,24 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         val time = timeInput.text.toString().trim()
         val description = descriptionInput.text.toString().trim()
         val location = locationInput.text.toString().trim()
-        val priority = "temp"
-        val category = "temp"
+
+        val priorityString = prioritySpinner.selectedItem.toString()
+        val priority = when (priorityString) {
+            "Low" -> Priority.LOW
+            "Medium" -> Priority.MEDIUM
+            "High" -> Priority.HIGH
+            else -> Priority.LOW
+        }
+
+        val categoryString = categorySpinner.selectedItem.toString()
+        val category = when (categoryString) {
+            "Work" -> Category.WORK
+            "Personal" -> Category.PERSONAL
+            "Study" -> Category.STUDY
+            "Fitness" -> Category.FITNESS
+            "Other" -> Category.OTHER
+            else -> Category.OTHER // Default value
+        }
 
         // Get the currently logged-in user
         val userId = FirebaseAuth.getInstance().currentUser?.uid

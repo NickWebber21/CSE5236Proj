@@ -84,7 +84,9 @@
         android:id="@+id/prioritySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dropdown"
+        android:entries="@array/priority_options" />
+
 
     <TextView
         android:id="@+id/CategoryText"
@@ -96,7 +98,8 @@
         android:id="@+id/categorySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:spinnerMode="dropdown" />
+        android:spinnerMode="dropdown"
+        android:entries="@array/category_options" />
 
     <Button
         android:id="@+id/submitButton"
