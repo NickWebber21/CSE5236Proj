@@ -95,13 +95,43 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     }
 
     private fun submitTask() {
-        //Handle Task
+        // Get the currently logged-in user
+        val userId = FirebaseAuth.getInstance().currentUser?.uid
+
+        if (userId != null) {
+            val task = createTask()
+            // If task creation was successful
+            task?.let {
+                // Push the task to Firebase Realtime Database under the user's node with a unique ID
+                databaseRef.child("users").child(userId).child("tasks").push().setValue(it)
+                    .addOnSuccessListener {
+                        Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show()
+                    }
+                    .addOnFailureListener { e ->
+                        Toast.makeText(requireContext(), "Failed to add task: ${e.message}", Toast.LENGTH_SHORT).show()
+                    }
+            }
+        } else {
+            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
+        }
+    }
+
+
+    private fun createTask(): Task? {
+        // Retrieve inputs
         val title = titleInput.text.toString().trim()
         val date = dateInput.text.toString().trim()
         val time = timeInput.text.toString().trim()
         val description = descriptionInput.text.toString().trim()
         val location = locationInput.text.toString().trim()
 
+        // Validate inputs (simple checks)
+        if (title.isEmpty() || date.isEmpty() || time.isEmpty() || description.isEmpty() || location.isEmpty()) {
+            Toast.makeText(requireContext(), "All fields must be filled", Toast.LENGTH_SHORT).show()
+            return null
+        }
+
+        // Retrieve and map priority
         val priorityString = prioritySpinner.selectedItem.toString()
         val priority = when (priorityString) {
             "Low" -> Priority.LOW
@@ -110,6 +140,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             else -> Priority.LOW
         }
 
+        // Retrieve and map category
         val categoryString = categorySpinner.selectedItem.toString()
         val category = when (categoryString) {
             "Work" -> Category.WORK
@@ -117,28 +148,13 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             "Study" -> Category.STUDY
             "Fitness" -> Category.FITNESS
             "Other" -> Category.OTHER
-            else -> Category.OTHER // Default value
+            else -> Category.OTHER
         }
 
-        // Get the currently logged-in user
-        val userId = FirebaseAuth.getInstance().currentUser?.uid
-
-        if (userId != null) {
-            // Create Task object
-            val task = Task(title, date, time, description, location, priority, category)
-
-            // Push task to Firebase Realtime Database under the user's node
-            databaseRef.child("users").child(userId).child("tasks").child(title).setValue(task)
-                .addOnSuccessListener {
-                    Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show()
-                }
-                .addOnFailureListener { e ->
-                    Toast.makeText(requireContext(), "Failed to add task: ${e.message}", Toast.LENGTH_SHORT).show()
-                }
-        } else {
-            Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
-        }
+        // Return the constructed Task object
+        return Task(title, date, time, description, location, priority, category)
     }
+
     // Used to help input the date
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
