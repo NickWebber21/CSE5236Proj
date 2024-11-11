@@ -1,6 +1,7 @@
 package com.example.schedulemaster.ui.fragment
 
 import android.app.DatePickerDialog
+import android.app.TimePickerDialog
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -48,6 +49,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         homeButton = view.findViewById(R.id.HomeButton)
 
         // Set up onClick listeners for buttons
+        // Do we need these?
         submitButton.setOnClickListener(this)
         homeButton.setOnClickListener(this)
 
@@ -56,9 +58,15 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             showDatePickerDialog()
         }
 
+        // Set up TimePicker for time input
+        timeInput.setOnClickListener {
+            showTimePickerDialog()
+        }
+
         return view
     }
 
+    // Override onClick -> Set Functions
     override fun onClick(v: View) {
         when (v.id) {
             R.id.submitButton -> submitTask()
@@ -67,6 +75,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     }
 
     private fun submitTask() {
+        //Handle Task
         val title = titleInput.text.toString().trim()
         val date = dateInput.text.toString().trim()
         val time = timeInput.text.toString().trim()
@@ -94,12 +103,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
     }
-
-    private fun navigateToHome() {
-        // Logic to navigate back to the home screen
-        Toast.makeText(requireContext(), "Navigating to Home", Toast.LENGTH_SHORT).show()
-    }
-
+    // Used to help input the date
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -109,7 +113,6 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         val datePickerDialog = DatePickerDialog(
             requireContext(),
             { _, selectedYear, selectedMonth, selectedDay ->
-                // Format the selected date as you prefer (e.g., dd/MM/yyyy)
                 val formattedDate = "$selectedDay/${selectedMonth + 1}/$selectedYear"
                 dateInput.setText(formattedDate)
             },
@@ -117,4 +120,26 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         )
         datePickerDialog.show()
     }
+    // Used to help input th time
+    private fun showTimePickerDialog() {
+        val calendar = Calendar.getInstance()
+        val hour = calendar.get(Calendar.HOUR_OF_DAY)
+        val minute = calendar.get(Calendar.MINUTE)
+
+        val timePickerDialog = TimePickerDialog(
+            requireContext(),
+            { _, selectedHour, selectedMinute ->
+                val formattedTime = String.format("%02d:%02d", selectedHour, selectedMinute)
+                timeInput.setText(formattedTime)
+            },
+            // We can possibly change this to 12 hr time?
+            hour, minute, true
+        )
+        timePickerDialog.show()
+    }
+
+    private fun navigateToHome() {
+        Toast.makeText(requireContext(), "Navigating to Home", Toast.LENGTH_SHORT).show()
+    }
+
 }
