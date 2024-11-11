@@ -2,6 +2,7 @@ package com.example.schedulemaster.ui.fragment
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +17,7 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.util.*
+import com.example.schedulemaster.ui.activity.HomeActivity
 
 class AddTaskFragment : Fragment(), View.OnClickListener {
 
@@ -36,7 +38,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_task, container, false)
 
-        // Initialize Firebase Realtime Database reference
+        // Initialize Firebase ref
         databaseRef = FirebaseDatabase.getInstance().reference
 
         // Bind views
@@ -56,11 +58,13 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         homeButton.setOnClickListener(this)
 
         // Set up DatePicker for date input
+        // Do we need this?
         dateInput.setOnClickListener {
             showDatePickerDialog()
         }
 
         // Set up TimePicker for time input
+        // Do we need this?
         timeInput.setOnClickListener {
             showTimePickerDialog()
         }
@@ -74,7 +78,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         prioritySpinner.adapter = priorityAdapter
 
-        // Set up the category spinner
+        // Set up the adapter for category spinner
         val categoryAdapter = ArrayAdapter.createFromResource(
             requireContext(),
             R.array.category_options,
@@ -106,6 +110,9 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
                 databaseRef.child("users").child(userId).child("tasks").push().setValue(it)
                     .addOnSuccessListener {
                         Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show()
+                        // Navigate to the home page after task is added
+                        val intent = Intent(requireContext(), HomeActivity::class.java)
+                        startActivity(intent)
                     }
                     .addOnFailureListener { e ->
                         Toast.makeText(requireContext(), "Failed to add task: ${e.message}", Toast.LENGTH_SHORT).show()
@@ -115,7 +122,6 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
     }
-
 
     private fun createTask(): Task? {
         // Retrieve inputs
@@ -191,7 +197,9 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     }
 
     private fun navigateToHome() {
-        Toast.makeText(requireContext(), "Navigating to Home", Toast.LENGTH_SHORT).show()
+        // Navigate to the home page
+        val intent = Intent(requireContext(), HomeActivity::class.java)
+        startActivity(intent)
     }
 
 }
