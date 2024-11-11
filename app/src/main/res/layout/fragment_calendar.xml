@@ -17,6 +17,13 @@
         android:padding="16dp"
         android:text="Add the task stuff here" />
 
+    <TextView
+        android:id="@+id/locationTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/location_unknown"
+        android:textSize="18sp"/>
+
     <Button
         android:id="@+id/HomeButton"
         android:layout_width="match_parent"

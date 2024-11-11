@@ -21,12 +21,17 @@ abstract class SingleFragmentActivity : AppCompatActivity() {
         setContentView(layoutResId)
 
         val fm = supportFragmentManager
-        var fragment = fm.findFragmentById(R.id.fragment_container)
+        var fragment = fm.findFragmentById(R.id.fragmentContainer)
 
         if (fragment == null) {
             fragment = createFragment()
             fm.beginTransaction()
-                .add(R.id.fragment_container, fragment)
+                .add(R.id.fragmentContainer, fragment)
+                .commit()
+        }
+        if (savedInstanceState == null) {
+            supportFragmentManager.beginTransaction()
+                .add(R.id.fragmentContainer, createFragment())
                 .commit()
         }
     }
