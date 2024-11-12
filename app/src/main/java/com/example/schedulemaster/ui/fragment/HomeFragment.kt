@@ -9,6 +9,7 @@ import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.example.schedulemaster.R
 import com.example.schedulemaster.ui.activity.AddTaskActivity
+import com.example.schedulemaster.ui.activity.CalendarActivity
 import com.example.schedulemaster.ui.activity.WelcomeActivity
 import com.google.firebase.auth.FirebaseAuth
 
@@ -16,6 +17,7 @@ class HomeFragment : Fragment(), View.OnClickListener {
 
     private lateinit var addTaskButton: Button
     private lateinit var logoutButton: Button
+    private lateinit var calendarButton: Button
 
     // Firebase Auth instance
     private lateinit var auth: FirebaseAuth
@@ -34,6 +36,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
         addTaskButton.setOnClickListener(this)
         logoutButton = v.findViewById(R.id.logoutButton)
         logoutButton.setOnClickListener(this)
+        calendarButton = v.findViewById(R.id.calendarButton)
+        calendarButton.setOnClickListener(this)
 
         return v
     }
@@ -42,6 +46,11 @@ class HomeFragment : Fragment(), View.OnClickListener {
         when (v.id) {
             R.id.AddTaskButton -> {
                 val intent = Intent(requireContext(), AddTaskActivity::class.java)
+                startActivity(intent)
+            }
+
+            R.id.calendarButton -> {
+                val intent = Intent(requireContext(), CalendarActivity::class.java)
                 startActivity(intent)
             }
 

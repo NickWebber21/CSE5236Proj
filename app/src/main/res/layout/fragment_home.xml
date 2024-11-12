@@ -34,16 +34,18 @@
             android:text="Add Task" />
     </LinearLayout>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/TodaysTasks"
+    <Button
+        android:id="@+id/calendarButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Calendar" />
 
     <TextView
         android:id="@+id/PlaceHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Maybe put a fragment container view here for the calendar fragment or something not sure yet." />
+        android:gravity="center"
+        android:text="Other Fragments below" />
 
 </LinearLayout>
-    <!-- TODO: add the welcome page stuff and login button and create account button -->
