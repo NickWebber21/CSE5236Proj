@@ -2,6 +2,7 @@ package com.example.schedulemaster.ui.fragment
 
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -59,6 +60,8 @@ class HomeFragment : Fragment(), View.OnClickListener {
                 val intent = Intent(requireContext(), WelcomeActivity::class.java)
                 startActivity(intent)
             }
+
+            else -> Log.e("INSIDE WelcomeFragment.kt", "Error: Invalid button press")
         }
     }
 }

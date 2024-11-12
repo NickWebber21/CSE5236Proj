@@ -20,10 +20,6 @@ class WelcomeFragment : Fragment(), View.OnClickListener {
 
     private lateinit var mLoginButton: Button
     private lateinit var mCreateAccountButton: Button
-    // Below is for testing purposes as of right now
-    private lateinit var mHomeButton: Button
-    private lateinit var mCalendarButton: Button
-    private lateinit var mAddTaskButton: Button
 
     // Firebase Auth instance
     private lateinit var auth: FirebaseAuth
@@ -50,13 +46,7 @@ class WelcomeFragment : Fragment(), View.OnClickListener {
         mCreateAccountButton = v.findViewById(R.id.createAccountButton)
         mCreateAccountButton.setOnClickListener(this)
 
-        // Buttons for testing purposes
-        mHomeButton = v.findViewById(R.id.HomeButton)
-        mHomeButton.setOnClickListener(this)
-        mCalendarButton = v.findViewById(R.id.CalendarButton)
-        mCalendarButton.setOnClickListener(this)
-        mAddTaskButton = v.findViewById(R.id.AddTaskButton)
-        mAddTaskButton.setOnClickListener(this)
+
 
         return v
     }
@@ -69,19 +59,6 @@ class WelcomeFragment : Fragment(), View.OnClickListener {
             }
             R.id.createAccountButton -> {
                 val intent = Intent(requireContext(), CreateAccountActivity::class.java)
-                startActivity(intent)
-            }
-            // Below is for testing purposes as of right now
-            R.id.HomeButton -> {
-                val intent = Intent(requireContext(), HomeActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.CalendarButton -> {
-                val intent = Intent(requireContext(), CalendarActivity::class.java)
-                startActivity(intent)
-            }
-            R.id.AddTaskButton -> {
-                val intent = Intent(requireContext(), AddTaskActivity::class.java)
                 startActivity(intent)
             }
             else -> Log.e("INSIDE WelcomeFragment.kt", "Error: Invalid button press")

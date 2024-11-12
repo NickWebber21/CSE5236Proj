@@ -31,39 +31,6 @@
         android:text="@string/login_page_2"
         android:textAlignment="center" />
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/scheduleMasterSub"
-        android:orientation="vertical"
-        android:padding="16dp">
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="FOR TESTING PURPOSES CLICK TO NAV BELOW"
-            android:textAlignment="center" />
-
-        <Button
-            android:id="@+id/HomeButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Home Page"/>
-
-        <Button
-            android:id="@+id/CalendarButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Calendar Page" />
-
-        <Button
-            android:id="@+id/AddTaskButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Task Page" />
-
-    </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
