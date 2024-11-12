@@ -1,31 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical"
-android:layout_width="match_parent"
-android:layout_height="match_parent">
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/textView2"
+    <LinearLayout
+        android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:gravity="center_vertical"
+        android:padding="8dp">
+
+        <Button
+            android:id="@+id/logoutButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Logout" />
+
+        <TextView
+            android:id="@+id/titleText"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:text="ScheduleMaster"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/AddTaskButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Task" />
+    </LinearLayout>
 
     <Button
-        android:id="@+id/AddTaskButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Add Task" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/TodaysTasks"
+        android:id="@+id/calendarButton"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        android:text="Calendar" />
 
     <TextView
         android:id="@+id/PlaceHolder"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Maybe put a fragment container view here for the calendar fragment or something not sure yet." />
+        android:gravity="center"
+        android:text="Other Fragments below" />
 
 </LinearLayout>
-    <!-- TODO: add the welcome page stuff and login button and create account button -->

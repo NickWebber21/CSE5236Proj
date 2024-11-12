@@ -1,69 +1,32 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/welcomeImage"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="16dp"
-        tools:srcCompat="@tools:sample/avatars" />
-
-    <TextView
-        android:id="@+id/scheduleMasterHead"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/welcomeImage"
-        android:text="@string/login_page_1"
-        android:textAlignment="center"
-        android:textSize="34sp"
-        android:textStyle="bold" />
-
-    <TextView
-        android:id="@+id/scheduleMasterSub"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/scheduleMasterHead"
-        android:text="@string/login_page_2"
-        android:textAlignment="center" />
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/scheduleMasterSub"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_centerInParent="true">
+
+        <!-- Change the size of photo to be relative not fixed -->
+        <ImageView
+            android:id="@+id/welcomeImage"
+            android:layout_width="268dp"
+            android:layout_height="258dp"
+            android:src="@drawable/logo"
+            tools:srcCompat="@tools:sample/avatars" />
 
         <TextView
+            android:id="@+id/scheduleMasterSub"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="FOR TESTING PURPOSES CLICK TO NAV BELOW"
+            android:layout_marginTop="1dp"
+            android:text="@string/login_page_2"
             android:textAlignment="center" />
-
-        <Button
-            android:id="@+id/HomeButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Home Page"/>
-
-        <Button
-            android:id="@+id/CalendarButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Calendar Page" />
-
-        <Button
-            android:id="@+id/AddTaskButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Add Task Page" />
-
     </LinearLayout>
-
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -77,7 +40,6 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Login"/>
-
 
         <Button
             android:id="@+id/createAccountButton"
