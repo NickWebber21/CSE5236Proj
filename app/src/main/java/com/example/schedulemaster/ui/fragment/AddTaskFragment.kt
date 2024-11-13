@@ -2,6 +2,7 @@ package com.example.schedulemaster.ui.fragment
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
@@ -19,13 +20,16 @@ import com.example.schedulemaster.model.Category
 import com.example.schedulemaster.model.Location
 import com.example.schedulemaster.model.Priority
 import com.example.schedulemaster.model.Task
+import com.example.schedulemaster.ui.activity.CalendarActivity
 import com.example.schedulemaster.ui.activity.HomeActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
+import java.io.IOException
 import java.util.*
+
 
 class AddTaskFragment : Fragment(), View.OnClickListener {
 
@@ -42,16 +46,18 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
     private lateinit var currentLocation: Location
-    //executes upon creating the fragment
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_task, container, false)
-        //setup firebase refs and get location perms
+
+        //setup firebase refs and location perms
         databaseRef = FirebaseDatabase.getInstance().reference
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         requestLocationPermission()
+
         //bind views
         titleInput = view.findViewById(R.id.TitleInput)
         dateInput = view.findViewById(R.id.editTextDate)
@@ -62,10 +68,12 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         categorySpinner = view.findViewById(R.id.categorySpinner)
         submitButton = view.findViewById(R.id.submitButton)
         homeButton = view.findViewById(R.id.HomeButton)
-        //set on click listeners
+
+
         submitButton.setOnClickListener(this)
         homeButton.setOnClickListener(this)
-        //create dialogs
+
+        //setup dialogs for date and time
         dateInput.setOnClickListener {
             showDatePickerDialog()
         }
@@ -73,7 +81,8 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         timeInput.setOnClickListener {
             showTimePickerDialog()
         }
-        //create spinners
+
+        //setup spinners
         val priorityAdapter = ArrayAdapter.createFromResource(
             requireContext(),
             R.array.priority_options,
@@ -89,11 +98,11 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         )
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         categorySpinner.adapter = categoryAdapter
-        //set and get current address as default
-        locationInput.setText("Current Address")
 
+        //set default location to current location
         getCurrentLocation { location ->
             currentLocation = location
+            locationInput.setText("Lat: ${location.latitude}, Lon: ${location.longitude}")
         }
 
         return view
@@ -105,8 +114,8 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             R.id.HomeButton -> navigateToHome()
         }
     }
-    //--------------Most if not all of these functions should be moved to a viewmodel folder------------
-    //responsible for compiling task data
+    //------------------Will clean up most of these for checkpoint 6 and move into VM class------------
+    //compile fields and submit a task to be created in firebase
     private fun submitTask() {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
@@ -140,40 +149,47 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
                 else -> Category.OTHER
             }
 
-            createTask(userId, title, date, time, description, currentLocation, priority, category)
+            val location = if (locationText.startsWith("Lat:")) {
+                currentLocation
+            } else {
+                geocodeAddress(requireContext(), locationText)
+            }
+            if (location == null) {
+                Toast.makeText(requireContext(), "Invalid address", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            createTask(userId, title, date, time, description, location, priority, category)
         } else {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
     }
-    //responsible for adding task to database
+    //add task to firebase realtime database under users ID
     private fun createTask(userId: String, title: String, date: String, time: String, description: String, location: Location, priority: Priority, category: Category) {
         val task = Task(title, date, time, description, location, priority, category)
-
         databaseRef.child("users").child(userId).child("tasks").push().setValue(task)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show()
-                val intent = Intent(requireContext(), HomeActivity::class.java)
+                val intent = Intent(requireContext(), CalendarActivity::class.java)
                 startActivity(intent)
             }
             .addOnFailureListener { e ->
                 Toast.makeText(requireContext(), "Failed to add task: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
-    //responsible for getting current location
+    //get current location
     private fun getCurrentLocation(callback: (Location) -> Unit) {
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
-                if (loc != null) {
+                val location = if (loc != null) {
                     val geocoder = Geocoder(requireContext(), Locale.getDefault())
                     val addressList: List<Address>? = geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
                     val address = if (!addressList.isNullOrEmpty()) {
-                        addressList[0].getAddressLine(0)  // Full address line
+                        addressList[0].getAddressLine(0)
                     } else {
                         "Address not available"
                     }
-
                     val location = Location(loc.latitude, loc.longitude, address)
-                    currentLocation = location // Store for use in database
                     callback(location)
                 } else {
                     callback(Location(0.0, 0.0, "Location unavailable"))
@@ -183,7 +199,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             requestLocationPermission()
         }
     }
-    //responsible for requesting location permissions
+    //request location permissions
     private fun requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             Toast.makeText(requireContext(), "Location permission is required to access your current location", Toast.LENGTH_SHORT).show()
@@ -194,7 +210,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             LOCATION_PERMISSION_REQUEST_CODE
         )
     }
-    //once permission is granted the first time, this executes
+    //after permissions are successfully requested, handle result
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
@@ -208,7 +224,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             }
         }
     }
-    //dialog for dates
+    //dialog picker date
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -225,7 +241,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         )
         datePickerDialog.show()
     }
-    //dialog for time
+    //dialog picker time
     private fun showTimePickerDialog() {
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -243,7 +259,33 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     }
     //navigate home
     private fun navigateToHome() {
-        val intent = Intent(requireContext(), HomeActivity::class.java)
+        val intent = Intent(requireContext(), CalendarActivity::class.java)
         startActivity(intent)
+    }
+    //turn lat and longitude into address
+    private fun geocodeAddress(context: Context, address: String): Location? {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        return try {
+            val addressList: MutableList<Address>? = geocoder.getFromLocationName(address, 1)
+            if (!addressList.isNullOrEmpty()) {
+                val latLngAddress = addressList[0]
+                val latitude = latLngAddress.latitude
+                val longitude = latLngAddress.longitude
+
+                val locationList = geocoder.getFromLocation(latitude, longitude, 1)
+                val fullAddress = if (!locationList.isNullOrEmpty()) {
+                    locationList[0].getAddressLine(0)
+                } else {
+                    "Address not available"
+                }
+
+                Location(latitude, longitude, fullAddress)
+            } else {
+                null
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
     }
 }
