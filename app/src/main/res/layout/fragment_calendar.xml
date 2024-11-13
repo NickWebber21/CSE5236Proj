@@ -15,20 +15,23 @@
         android:id="@+id/taskHeader"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:padding="16dp"
         android:text="Tasks for Selected Date"
-        android:textSize="18sp"
-        android:padding="16dp" />
+        android:textSize="18sp" />
 
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="0dp"
+        android:layout_height="match_parent"
         android:layout_weight="1">
 
         <LinearLayout
             android:id="@+id/taskContainer"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:maxLines="100"
+            android:ellipsize="none"
+            android:singleLine="false"/>
     </ScrollView>
 
     <Button

@@ -22,8 +22,11 @@ import com.example.schedulemaster.ui.activity.HomeActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import android.content.pm.PackageManager
+import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import android.location.Geocoder
+import android.location.Address
 
 class AddTaskFragment : Fragment(), View.OnClickListener {
 
@@ -129,7 +132,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
                     "High" -> Priority.HIGH
                     else -> Priority.LOW
                 }
-
+                //Log.d("AddTaskFragment","Location found at ${location}")
                 val categoryString = categorySpinner.selectedItem.toString()
                 val category = when (categoryString) {
                     "Work" -> Category.WORK
@@ -163,11 +166,22 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
                 val location = if (loc != null) {
-                    Location(loc.latitude, loc.longitude)
+                    //Location(loc.latitude, loc.longitude)
+                    val geocoder = Geocoder(requireContext(), Locale.getDefault())
+                    val addressList: List<Address>? = geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
+                    val address = if (!addressList.isNullOrEmpty()) {
+                        addressList[0].getAddressLine(0)  // Full address line
+                    } else {
+                        "Address not available"
+                    }
+                    // Create a Location object with latitude, longitude, and address
+                    val location = Location(loc.latitude, loc.longitude, address)
+                    callback(location)
                 } else {
-                    Location(0.0, 0.0)
+                    callback(Location(0.0, 0.0, "Location unavailable"))
                 }
-                callback(location)
+
+                //callback(location)
             }
         } else {
             requestLocationPermission()

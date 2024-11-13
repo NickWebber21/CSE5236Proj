@@ -10,7 +10,8 @@ enum class Category {
 
 data class Location(
     val latitude: Double,
-    val longitude: Double
+    val longitude: Double,
+    val address: String? = null
 ){
     constructor() : this(0.0, 0.0)
 }
