@@ -8,6 +8,11 @@ enum class Category {
     WORK, PERSONAL, STUDY, FITNESS, OTHER
 }
 
+data class Location(
+    val latitude: Double,
+    val longitude: Double
+)
+
 data class Task(
     val title: String,
     // Storing in dd/MM/yyyy format for consistency
@@ -15,7 +20,7 @@ data class Task(
     // Storing in hh:MM format for consistency
     val time: String,
     val description: String,
-    val location: String,
+    val location: Location,
     // Check enum
     val priority: Priority,
     // Check enum
