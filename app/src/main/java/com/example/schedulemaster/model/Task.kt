@@ -11,7 +11,9 @@ enum class Category {
 data class Location(
     val latitude: Double,
     val longitude: Double
-)
+){
+    constructor() : this(0.0, 0.0)
+}
 
 data class Task(
     val title: String,
@@ -20,11 +22,12 @@ data class Task(
     // Storing in hh:MM format for consistency
     val time: String,
     val description: String,
+    // Check model above
     val location: Location,
     // Check enum
     val priority: Priority,
     // Check enum
     val category: Category
 ){
-
+    constructor() : this("", "", "", "", Location(), Priority.LOW, Category.OTHER)
 }
