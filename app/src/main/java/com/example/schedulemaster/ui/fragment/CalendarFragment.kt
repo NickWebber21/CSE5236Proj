@@ -91,13 +91,87 @@ class CalendarFragment : Fragment(), View.OnClickListener {
     }
 
     private fun addTaskToView(task: Task) {
-        // Create a TextView for each task
-        val taskView = TextView(context).apply {
-            text = "${task.title} at ${task.time}"
-            textSize = 16f
-            setPadding(8, 8, 8, 8)
+        // Create a LinearLayout to hold the task details
+        val taskLayout = LinearLayout(context).apply {
+            orientation = LinearLayout.VERTICAL
+            setPadding(16, 16, 16, 16)
         }
 
-        taskContainer.addView(taskView)
+        // Tier 1: Title and Time
+        val titleAndTimeLayout = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(0, 8, 0, 4)
+        }
+
+        // Title
+        val titleView = TextView(context).apply {
+            text = task.title
+            textSize = 18f
+            setPadding(0, 8, 16, 4)
+            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+        }
+
+        // Time
+        val timeView = TextView(context).apply {
+            text = task.time
+            textSize = 16f
+            setPadding(0, 8, 0, 4)
+            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+        }
+
+        // Add Title and Time to the tier layout
+        titleAndTimeLayout.addView(titleView)
+        titleAndTimeLayout.addView(timeView)
+
+        // Tier 2: Location, Priority, and Category
+        val locationPriorityCategoryLayout = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(0, 8, 0, 4)
+        }
+
+        // Location
+        val locationView = TextView(context).apply {
+            text = "${task.location.latitude}, ${task.location.longitude}"  // You can format this if needed
+            textSize = 14f
+            setPadding(0, 8, 16, 4)
+            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+        }
+
+        // Priority
+        val priorityView = TextView(context).apply {
+            text = task.priority.toString()
+            textSize = 14f
+            setPadding(0, 8, 16, 4)
+            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+        }
+
+        // Category
+        val categoryView = TextView(context).apply {
+            text = task.category.toString()
+            textSize = 14f
+            setPadding(0, 8, 0, 4)
+            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+        }
+
+        // Add Location, Priority, and Category to the tier layout
+        locationPriorityCategoryLayout.addView(locationView)
+        locationPriorityCategoryLayout.addView(priorityView)
+        locationPriorityCategoryLayout.addView(categoryView)
+
+        // Tier 3: Description
+        val descriptionView = TextView(context).apply {
+            text = task.description
+            textSize = 14f
+            setPadding(0, 8, 0, 4)
+            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+        }
+
+        // Add views to the task layout
+        taskLayout.addView(titleAndTimeLayout)
+        taskLayout.addView(locationPriorityCategoryLayout)
+        taskLayout.addView(descriptionView)
+
+        // Add the task layout to the task container
+        taskContainer.addView(taskLayout)
     }
 }

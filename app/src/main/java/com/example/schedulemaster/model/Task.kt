@@ -22,6 +22,7 @@ data class Task(
     // Storing in hh:MM format for consistency
     val time: String,
     val description: String,
+    // Check model above
     val location: Location,
     // Check enum
     val priority: Priority,
