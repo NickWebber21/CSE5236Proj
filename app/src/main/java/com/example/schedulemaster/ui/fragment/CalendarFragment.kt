@@ -104,6 +104,10 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         val taskLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(16, 16, 16, 16)
+            layoutParams = ViewGroup.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT
+            )
         }
 
         // Tier 1: Title and Time
@@ -117,7 +121,9 @@ class CalendarFragment : Fragment(), View.OnClickListener {
             text = task.title
             textSize = 18f
             setPadding(0, 8, 16, 4)
-            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+            setTextColor(resources.getColor(R.color.black))
+            maxLines = Integer.MAX_VALUE
+            isSingleLine = false
         }
 
         // Time
@@ -125,59 +131,86 @@ class CalendarFragment : Fragment(), View.OnClickListener {
             text = task.time
             textSize = 16f
             setPadding(0, 8, 0, 4)
-            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+            setTextColor(resources.getColor(R.color.black))
+            maxLines = Integer.MAX_VALUE
+            isSingleLine = false
         }
 
         titleAndTimeLayout.addView(titleView)
         titleAndTimeLayout.addView(timeView)
 
-        // Tier 2: Location, Priority, and Category
-        val locationPriorityCategoryLayout = LinearLayout(context).apply {
+        // Tier 2: Location (Address)
+        val addressLayout = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, 8, 0, 4)
         }
 
-        // Location
-        val locationView = TextView(context).apply {
-            text = "${task.location.latitude}, ${task.location.longitude}"  // You can format this if needed
+        val addressView = TextView(context).apply {
+            text = task.location.address
             textSize = 14f
             setPadding(0, 8, 16, 4)
-            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+            setTextColor(resources.getColor(R.color.black))
+            maxLines = Integer.MAX_VALUE
+            isSingleLine = false
         }
 
-        // Priority
+        addressLayout.addView(addressView)
+
+        // Tier 3: Priority and Category
+        val priorityCategoryLayout = LinearLayout(context).apply {
+            orientation = LinearLayout.HORIZONTAL
+            setPadding(0, 8, 0, 4)
+        }
+
         val priorityView = TextView(context).apply {
             text = task.priority.toString()
             textSize = 14f
             setPadding(0, 8, 16, 4)
-            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+            setTextColor(resources.getColor(R.color.black))
+            maxLines = Integer.MAX_VALUE
+            isSingleLine = false
         }
 
-        // Category
         val categoryView = TextView(context).apply {
             text = task.category.toString()
             textSize = 14f
             setPadding(0, 8, 0, 4)
             setTextColor(resources.getColor(R.color.black))
+            maxLines = Integer.MAX_VALUE
+            isSingleLine = false
         }
 
-        locationPriorityCategoryLayout.addView(locationView)
-        locationPriorityCategoryLayout.addView(priorityView)
-        locationPriorityCategoryLayout.addView(categoryView)
+        priorityCategoryLayout.addView(priorityView)
+        priorityCategoryLayout.addView(categoryView)
 
-        // Tier 3: Description
+        // Tier 4: Description
         val descriptionView = TextView(context).apply {
             text = task.description
             textSize = 14f
             setPadding(0, 8, 0, 4)
-            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+            setTextColor(resources.getColor(R.color.black))
+            maxLines = Integer.MAX_VALUE
+            isSingleLine = false
         }
 
         // Add views to the task layout
         taskLayout.addView(titleAndTimeLayout)
-        taskLayout.addView(locationPriorityCategoryLayout)
+        taskLayout.addView(addressLayout)
+        taskLayout.addView(priorityCategoryLayout)
         taskLayout.addView(descriptionView)
 
         taskContainer.addView(taskLayout)
+
+        // Optional: Add a separator for each task
+        val divider = View(context).apply {
+            layoutParams = LinearLayout.LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                2
+            ).apply {
+                setMargins(16, 8, 16, 8)
+            }
+            setBackgroundColor(resources.getColor(R.color.purple_200))
+        }
+        taskContainer.addView(divider)
     }
 }
