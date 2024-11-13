@@ -13,14 +13,18 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.example.schedulemaster.R
 import com.example.schedulemaster.model.Task
+import com.example.schedulemaster.ui.activity.AddTaskActivity
+import com.example.schedulemaster.ui.activity.CalendarActivity
 import com.example.schedulemaster.ui.activity.HomeActivity
+import com.example.schedulemaster.ui.activity.WelcomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
 
 
 class CalendarFragment : Fragment(), View.OnClickListener {
 
-    private lateinit var mHomeButton: Button
+    private lateinit var addTaskButton: Button
+    private lateinit var logoutButton: Button
     private lateinit var calendarView: CalendarView
     private lateinit var taskContainer: LinearLayout
     private lateinit var databaseRef: DatabaseReference
@@ -38,8 +42,10 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         databaseRef = FirebaseDatabase.getInstance().reference
         userId = auth.currentUser?.uid ?: ""
 
-        mHomeButton = v.findViewById(R.id.HomeButton)
-        mHomeButton.setOnClickListener(this)
+        addTaskButton = v.findViewById(R.id.AddTaskButton)
+        addTaskButton.setOnClickListener(this)
+        logoutButton = v.findViewById(R.id.logoutButton)
+        logoutButton.setOnClickListener(this)
 
         calendarView = v.findViewById(R.id.calendarView)
         taskContainer = v.findViewById(R.id.taskContainer)
@@ -55,8 +61,16 @@ class CalendarFragment : Fragment(), View.OnClickListener {
 
     override fun onClick(v: View) {
         when (v.id) {
-            R.id.HomeButton -> {
-                val intent = Intent(requireContext(), HomeActivity::class.java)
+
+            R.id.AddTaskButton -> {
+                val intent = Intent(requireContext(), AddTaskActivity::class.java)
+                startActivity(intent)
+            }
+
+
+            R.id.logoutButton -> {
+                auth.signOut()
+                val intent = Intent(requireContext(), WelcomeActivity::class.java)
                 startActivity(intent)
             }
         }

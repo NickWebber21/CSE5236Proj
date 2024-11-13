@@ -2,31 +2,34 @@ package com.example.schedulemaster.ui.fragment
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.location.Address
+import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.example.schedulemaster.R
 import com.example.schedulemaster.model.Category
 import com.example.schedulemaster.model.Location
 import com.example.schedulemaster.model.Priority
 import com.example.schedulemaster.model.Task
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.FirebaseDatabase
-import java.util.*
+import com.example.schedulemaster.ui.activity.CalendarActivity
 import com.example.schedulemaster.ui.activity.HomeActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
-import android.content.pm.PackageManager
-import android.util.Log
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import android.location.Geocoder
-import android.location.Address
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.database.DatabaseReference
+import com.google.firebase.database.FirebaseDatabase
+import java.io.IOException
+import java.util.*
+
 
 class AddTaskFragment : Fragment(), View.OnClickListener {
 
@@ -42,6 +45,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     private lateinit var databaseRef: DatabaseReference
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
+    private lateinit var currentLocation: Location
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -97,6 +101,12 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         categorySpinner.adapter = categoryAdapter
 
+        // Set default location to current location
+        getCurrentLocation { location ->
+            currentLocation = location
+            locationInput.setText("Lat: ${location.latitude}, Lon: ${location.longitude}")
+        }
+
         return view
     }
 
@@ -117,49 +127,62 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             val date = dateInput.text.toString().trim()
             val time = timeInput.text.toString().trim()
             val description = descriptionInput.text.toString().trim()
+            val locationText = locationInput.text.toString().trim()
 
-            if (title.isEmpty() || date.isEmpty() || time.isEmpty() || description.isEmpty()) {
+            if (title.isEmpty() || date.isEmpty() || time.isEmpty() || description.isEmpty() || locationText.isEmpty()) {
                 Toast.makeText(requireContext(), "All fields must be filled", Toast.LENGTH_SHORT).show()
                 return
             }
 
-            // Use the callback to fetch the location and create the task once the location is available
-            getCurrentLocation { location ->
-                val priorityString = prioritySpinner.selectedItem.toString()
-                val priority = when (priorityString) {
-                    "Low" -> Priority.LOW
-                    "Medium" -> Priority.MEDIUM
-                    "High" -> Priority.HIGH
-                    else -> Priority.LOW
-                }
-                //Log.d("AddTaskFragment","Location found at ${location}")
-                val categoryString = categorySpinner.selectedItem.toString()
-                val category = when (categoryString) {
-                    "Work" -> Category.WORK
-                    "Personal" -> Category.PERSONAL
-                    "Study" -> Category.STUDY
-                    "Fitness" -> Category.FITNESS
-                    "Other" -> Category.OTHER
-                    else -> Category.OTHER
-                }
-
-                val task = Task(title, date, time, description, location, priority, category)
-
-                // Push the task to Firebase Realtime Database under the user's node with a unique ID
-                databaseRef.child("users").child(userId).child("tasks").push().setValue(task)
-                    .addOnSuccessListener {
-                        Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show()
-                        // Navigate to the home page after task is added
-                        val intent = Intent(requireContext(), HomeActivity::class.java)
-                        startActivity(intent)
-                    }
-                    .addOnFailureListener { e ->
-                        Toast.makeText(requireContext(), "Failed to add task: ${e.message}", Toast.LENGTH_SHORT).show()
-                    }
+            val priorityString = prioritySpinner.selectedItem.toString()
+            val priority = when (priorityString) {
+                "Low" -> Priority.LOW
+                "Medium" -> Priority.MEDIUM
+                "High" -> Priority.HIGH
+                else -> Priority.LOW
             }
+
+            val categoryString = categorySpinner.selectedItem.toString()
+            val category = when (categoryString) {
+                "Work" -> Category.WORK
+                "Personal" -> Category.PERSONAL
+                "Study" -> Category.STUDY
+                "Fitness" -> Category.FITNESS
+                "Other" -> Category.OTHER
+                else -> Category.OTHER
+            }
+
+            val location = if (locationText.startsWith("Lat:")) {
+                currentLocation
+            } else {
+                geocodeAddress(requireContext(), locationText)
+            }
+
+            if (location == null) {
+                Toast.makeText(requireContext(), "Invalid address", Toast.LENGTH_SHORT).show()
+                return
+            }
+
+            createTask(userId, title, date, time, description, location, priority, category)
         } else {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
+    }
+
+    private fun createTask(userId: String, title: String, date: String, time: String, description: String, location: Location, priority: Priority, category: Category) {
+        val task = Task(title, date, time, description, location, priority, category)
+
+        // Push the task to Firebase Realtime Database under the user's node with a unique ID
+        databaseRef.child("users").child(userId).child("tasks").push().setValue(task)
+            .addOnSuccessListener {
+                Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show()
+                // Navigate to the home page after task is added
+                val intent = Intent(requireContext(), HomeActivity::class.java)
+                startActivity(intent)
+            }
+            .addOnFailureListener { e ->
+                Toast.makeText(requireContext(), "Failed to add task: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
     }
 
     private fun getCurrentLocation(callback: (Location) -> Unit) {
@@ -249,5 +272,21 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     private fun navigateToHome() {
         val intent = Intent(requireContext(), HomeActivity::class.java)
         startActivity(intent)
+    }
+
+    private fun geocodeAddress(context: Context, address: String): Location? {
+        val geocoder = Geocoder(context, Locale.getDefault())
+        return try {
+            val addresses: MutableList<Address>? = geocoder.getFromLocationName(address, 1)
+            if (addresses?.isNotEmpty() == true) {
+                val location = addresses?.get(0)
+                location?.let { Location(it.latitude, location.longitude) }
+            } else {
+                null
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            null
+        }
     }
 }
