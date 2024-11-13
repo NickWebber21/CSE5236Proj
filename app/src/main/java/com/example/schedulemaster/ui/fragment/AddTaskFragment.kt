@@ -24,6 +24,7 @@ import com.google.android.gms.location.LocationServices
 import android.content.pm.PackageManager
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.schedulemaster.ui.activity.CalendarActivity
 
 class AddTaskFragment : Fragment(), View.OnClickListener {
 
@@ -233,7 +234,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     }
 
     private fun navigateToHome() {
-        val intent = Intent(requireContext(), HomeActivity::class.java)
+        val intent = Intent(requireContext(), CalendarActivity::class.java)
         startActivity(intent)
     }
 }

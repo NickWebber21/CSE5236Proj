@@ -13,6 +13,7 @@ import android.widget.Toast
 import com.example.schedulemaster.R
 import com.google.firebase.auth.FirebaseAuth
 import com.example.schedulemaster.ui.activity.HomeActivity
+import com.example.schedulemaster.ui.activity.CalendarActivity
 
 class CreateAccountFragment : Fragment(), View.OnClickListener {
 
@@ -65,7 +66,7 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
                 if (task.isSuccessful) {
                     // Account creation successful
                     Toast.makeText(requireContext(), "Account created successfully", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(requireContext(), HomeActivity::class.java)
+                    val intent = Intent(requireContext(), CalendarActivity::class.java)
                     startActivity(intent);
                 } else {
                     // If sign up fails, display a message to the user.

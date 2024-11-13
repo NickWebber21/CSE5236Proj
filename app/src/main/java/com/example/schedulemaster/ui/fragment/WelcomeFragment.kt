@@ -36,7 +36,7 @@ class WelcomeFragment : Fragment(), View.OnClickListener {
 
         // Check if user is already logged in
         if (auth.currentUser != null) {
-            val intent = Intent(requireContext(), HomeActivity::class.java)
+            val intent = Intent(requireContext(), CalendarActivity::class.java)
             startActivity(intent)
         }
 
