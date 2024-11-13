@@ -9,19 +9,14 @@ import android.view.ViewGroup
 import android.widget.Button
 import androidx.fragment.app.Fragment
 import com.example.schedulemaster.R
-import com.example.schedulemaster.ui.activity.AddTaskActivity
 import com.example.schedulemaster.ui.activity.CalendarActivity
 import com.example.schedulemaster.ui.activity.CreateAccountActivity
-import com.example.schedulemaster.ui.activity.HomeActivity
 import com.example.schedulemaster.ui.activity.LoginActivity
 import com.google.firebase.auth.FirebaseAuth
 
 class WelcomeFragment : Fragment(), View.OnClickListener {
-
     private lateinit var mLoginButton: Button
     private lateinit var mCreateAccountButton: Button
-
-    // Firebase Auth instance
     private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
@@ -30,23 +25,18 @@ class WelcomeFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         val v = inflater.inflate(R.layout.fragment_welcome, container, false)
-
-        // Initialize Firebase Auth
+        //setup firebase auth
         auth = FirebaseAuth.getInstance()
-
-        // Check if user is already logged in
+        //check if user is logged in already
         if (auth.currentUser != null) {
             val intent = Intent(requireContext(), CalendarActivity::class.java)
             startActivity(intent)
         }
-
-        // Initialize buttons and set onClick listeners
+        //bind views
         mLoginButton = v.findViewById(R.id.loginButton)
         mLoginButton.setOnClickListener(this)
         mCreateAccountButton = v.findViewById(R.id.createAccountButton)
         mCreateAccountButton.setOnClickListener(this)
-
-
 
         return v
     }
