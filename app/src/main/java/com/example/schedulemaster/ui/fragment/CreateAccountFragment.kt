@@ -12,7 +12,6 @@ import android.widget.EditText
 import android.widget.Toast
 import com.example.schedulemaster.R
 import com.google.firebase.auth.FirebaseAuth
-import com.example.schedulemaster.ui.activity.HomeActivity
 import com.example.schedulemaster.ui.activity.CalendarActivity
 
 class CreateAccountFragment : Fragment(), View.OnClickListener {
@@ -26,7 +25,7 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
         super.onCreate(savedInstanceState)
         auth = FirebaseAuth.getInstance()
     }
-
+    //executes upon creating the fragment
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -34,8 +33,7 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
     ): View {
         val v = inflater.inflate(R.layout.fragment_create_account, container, false)
         Log.i("CreateAccountFragment", "onCreateView fragment started.")
-
-        // Initialize UI elements
+        //bind views
         mEditUsernameText = v.findViewById(R.id.usernameText)
         mEditPasswordText = v.findViewById(R.id.passwordText)
         mCreateAccountButton = v.findViewById(R.id.createAccountButton)
@@ -59,17 +57,15 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
             else -> Log.e("CreateAccountFragment", "Error: Invalid button press")
         }
     }
-
+    //creates an account using firebase auth
     private fun createAccount(email: String, password: String) {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener(requireActivity()) { task ->
                 if (task.isSuccessful) {
-                    // Account creation successful
                     Toast.makeText(requireContext(), "Account created successfully", Toast.LENGTH_SHORT).show()
                     val intent = Intent(requireContext(), CalendarActivity::class.java)
                     startActivity(intent);
                 } else {
-                    // If sign up fails, display a message to the user.
                     Log.e("CreateAccountFragment", "Account creation failed: ${task.exception?.message}")
                     Toast.makeText(requireContext(), "Account creation failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
                 }

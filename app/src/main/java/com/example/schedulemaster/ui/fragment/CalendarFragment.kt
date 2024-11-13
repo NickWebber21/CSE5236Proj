@@ -14,8 +14,6 @@ import androidx.fragment.app.Fragment
 import com.example.schedulemaster.R
 import com.example.schedulemaster.model.Task
 import com.example.schedulemaster.ui.activity.AddTaskActivity
-import com.example.schedulemaster.ui.activity.CalendarActivity
-import com.example.schedulemaster.ui.activity.HomeActivity
 import com.example.schedulemaster.ui.activity.WelcomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
@@ -30,32 +28,30 @@ class CalendarFragment : Fragment(), View.OnClickListener {
     private lateinit var databaseRef: DatabaseReference
     private lateinit var auth: FirebaseAuth
     private lateinit var userId: String
-
+    //executes upon creating the fragment
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val v = inflater.inflate(R.layout.fragment_calendar, container, false)
-
+        //setup firebase refs and get user id
         auth = FirebaseAuth.getInstance()
         databaseRef = FirebaseDatabase.getInstance().reference
         userId = auth.currentUser?.uid ?: ""
-
+        //bind views
         addTaskButton = v.findViewById(R.id.AddTaskButton)
         addTaskButton.setOnClickListener(this)
         logoutButton = v.findViewById(R.id.logoutButton)
         logoutButton.setOnClickListener(this)
-
         calendarView = v.findViewById(R.id.calendarView)
         taskContainer = v.findViewById(R.id.taskContainer)
-
+        //each time the user changes a date, load tasks
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val date = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
             Log.d("Date sent to firebase:", date)
             loadTasksForDate(date)
         }
-
         return v
     }
 
@@ -75,7 +71,7 @@ class CalendarFragment : Fragment(), View.OnClickListener {
             }
         }
     }
-
+    //load tasks for a specific date
     private fun loadTasksForDate(date: String) {
         taskContainer.removeAllViews()
         val tasksRef = databaseRef.child("users").child(userId).child("tasks")
@@ -98,9 +94,9 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         })
     }
 
-    // This whole function could be shortened by using an XML layout instead
+    //--------------------this function will be replace by a recycler view later-------------------
+    //adds a task to the display using native XML scroll list formatting
     private fun addTaskToView(task: Task) {
-        // Create a LinearLayout to hold the task details
         val taskLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
             setPadding(16, 16, 16, 16)
@@ -110,13 +106,11 @@ class CalendarFragment : Fragment(), View.OnClickListener {
             )
         }
 
-        // Tier 1: Title and Time
         val titleAndTimeLayout = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, 8, 0, 4)
         }
 
-        // Title
         val titleView = TextView(context).apply {
             text = task.title
             textSize = 18f
@@ -126,7 +120,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
             isSingleLine = false
         }
 
-        // Time
         val timeView = TextView(context).apply {
             text = task.time
             textSize = 16f
@@ -139,7 +132,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         titleAndTimeLayout.addView(titleView)
         titleAndTimeLayout.addView(timeView)
 
-        // Tier 2: Location (Address)
         val addressLayout = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, 8, 0, 4)
@@ -156,7 +148,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
 
         addressLayout.addView(addressView)
 
-        // Tier 3: Priority and Category
         val priorityCategoryLayout = LinearLayout(context).apply {
             orientation = LinearLayout.HORIZONTAL
             setPadding(0, 8, 0, 4)
@@ -183,7 +174,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         priorityCategoryLayout.addView(priorityView)
         priorityCategoryLayout.addView(categoryView)
 
-        // Tier 4: Description
         val descriptionView = TextView(context).apply {
             text = task.description
             textSize = 14f
@@ -193,7 +183,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
             isSingleLine = false
         }
 
-        // Add views to the task layout
         taskLayout.addView(titleAndTimeLayout)
         taskLayout.addView(addressLayout)
         taskLayout.addView(priorityCategoryLayout)
@@ -201,7 +190,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
 
         taskContainer.addView(taskLayout)
 
-        // Optional: Add a separator for each task
         val divider = View(context).apply {
             layoutParams = LinearLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
