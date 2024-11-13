@@ -2,7 +2,6 @@ package com.example.schedulemaster.ui.fragment
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Address
@@ -26,7 +25,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
-import java.io.IOException
 import java.util.*
 
 class AddTaskFragment : Fragment(), View.OnClickListener {
@@ -44,19 +42,17 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
     private lateinit var currentLocation: Location
-
+    //executes upon creating the fragment
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.fragment_add_task, container, false)
-
-        // Initialize Firebase ref and location services
+        //setup firebase refs and get location perms
         databaseRef = FirebaseDatabase.getInstance().reference
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
         requestLocationPermission()
-
-        // Bind views
+        //bind views
         titleInput = view.findViewById(R.id.TitleInput)
         dateInput = view.findViewById(R.id.editTextDate)
         timeInput = view.findViewById(R.id.editTextTime)
@@ -66,22 +62,18 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         categorySpinner = view.findViewById(R.id.categorySpinner)
         submitButton = view.findViewById(R.id.submitButton)
         homeButton = view.findViewById(R.id.HomeButton)
-
-        // Set up onClick listeners for buttons
+        //set on click listeners
         submitButton.setOnClickListener(this)
         homeButton.setOnClickListener(this)
-
-        // Set up DatePicker for date input
+        //create dialogs
         dateInput.setOnClickListener {
             showDatePickerDialog()
         }
 
-        // Set up TimePicker for time input
         timeInput.setOnClickListener {
             showTimePickerDialog()
         }
-
-        // Set up the adapter for the priority spinner
+        //create spinners
         val priorityAdapter = ArrayAdapter.createFromResource(
             requireContext(),
             R.array.priority_options,
@@ -90,7 +82,6 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         priorityAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         prioritySpinner.adapter = priorityAdapter
 
-        // Set up the adapter for category spinner
         val categoryAdapter = ArrayAdapter.createFromResource(
             requireContext(),
             R.array.category_options,
@@ -98,11 +89,9 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         )
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         categorySpinner.adapter = categoryAdapter
-
-        // Set default location text to "Current Address"
+        //set and get current address as default
         locationInput.setText("Current Address")
 
-        // Get and store the actual current location details
         getCurrentLocation { location ->
             currentLocation = location
         }
@@ -110,16 +99,15 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         return view
     }
 
-    // Override onClick -> Set Functions
     override fun onClick(v: View) {
         when (v.id) {
             R.id.submitButton -> submitTask()
             R.id.HomeButton -> navigateToHome()
         }
     }
-
+    //--------------Most if not all of these functions should be moved to a viewmodel folder------------
+    //responsible for compiling task data
     private fun submitTask() {
-        // Get the currently logged-in user
         val userId = FirebaseAuth.getInstance().currentUser?.uid
 
         if (userId != null) {
@@ -152,21 +140,18 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
                 else -> Category.OTHER
             }
 
-            // Use currentLocation regardless of locationInput field for actual data
             createTask(userId, title, date, time, description, currentLocation, priority, category)
         } else {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
     }
-
+    //responsible for adding task to database
     private fun createTask(userId: String, title: String, date: String, time: String, description: String, location: Location, priority: Priority, category: Category) {
         val task = Task(title, date, time, description, location, priority, category)
 
-        // Push the task to Firebase Realtime Database under the user's node with a unique ID
         databaseRef.child("users").child(userId).child("tasks").push().setValue(task)
             .addOnSuccessListener {
                 Toast.makeText(requireContext(), "Task added successfully", Toast.LENGTH_SHORT).show()
-                // Navigate to the home page after task is added
                 val intent = Intent(requireContext(), HomeActivity::class.java)
                 startActivity(intent)
             }
@@ -174,7 +159,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
                 Toast.makeText(requireContext(), "Failed to add task: ${e.message}", Toast.LENGTH_SHORT).show()
             }
     }
-
+    //responsible for getting current location
     private fun getCurrentLocation(callback: (Location) -> Unit) {
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
@@ -198,7 +183,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             requestLocationPermission()
         }
     }
-
+    //responsible for requesting location permissions
     private fun requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             Toast.makeText(requireContext(), "Location permission is required to access your current location", Toast.LENGTH_SHORT).show()
@@ -209,7 +194,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             LOCATION_PERMISSION_REQUEST_CODE
         )
     }
-
+    //once permission is granted the first time, this executes
     override fun onRequestPermissionsResult(
         requestCode: Int, permissions: Array<out String>, grantResults: IntArray
     ) {
@@ -223,7 +208,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             }
         }
     }
-
+    //dialog for dates
     private fun showDatePickerDialog() {
         val calendar = Calendar.getInstance()
         val year = calendar.get(Calendar.YEAR)
@@ -240,7 +225,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         )
         datePickerDialog.show()
     }
-
+    //dialog for time
     private fun showTimePickerDialog() {
         val calendar = Calendar.getInstance()
         val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -256,7 +241,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         )
         timePickerDialog.show()
     }
-
+    //navigate home
     private fun navigateToHome() {
         val intent = Intent(requireContext(), HomeActivity::class.java)
         startActivity(intent)
