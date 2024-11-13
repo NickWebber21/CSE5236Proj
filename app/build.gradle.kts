@@ -56,6 +56,7 @@ dependencies {
     implementation(libs.firebase.database)
     implementation(libs.firebase.database.ktx)
     implementation(libs.firebase.auth)
+    implementation(libs.play.services.location)
     val fragment_version = "1.8.4"
 
     // Java language implementation
