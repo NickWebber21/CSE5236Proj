@@ -16,9 +16,7 @@ import com.example.schedulemaster.model.Task
 import com.example.schedulemaster.ui.activity.HomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.*
-import com.example.schedulemaster.model.Category
-import com.example.schedulemaster.model.Location
-import com.example.schedulemaster.model.Priority
+
 
 class CalendarFragment : Fragment(), View.OnClickListener {
 
@@ -65,14 +63,11 @@ class CalendarFragment : Fragment(), View.OnClickListener {
     }
 
     private fun loadTasksForDate(date: String) {
-        taskContainer.removeAllViews() // Clear previous tasks
-
-        // Query tasks for the logged-in user and the selected date
+        taskContainer.removeAllViews()
         val tasksRef = databaseRef.child("users").child(userId).child("tasks")
         tasksRef.addListenerForSingleValueEvent(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 if (snapshot.exists()) {
-                    // Loop through tasks and check if the date matches
                     for (taskSnapshot in snapshot.children) {
                         val task = taskSnapshot.getValue(Task::class.java)
                         if (task != null && task.date == date) {
@@ -83,13 +78,13 @@ class CalendarFragment : Fragment(), View.OnClickListener {
                     Log.d("CalendarFragment", "No tasks found for this user.")
                 }
             }
-
             override fun onCancelled(error: DatabaseError) {
                 Log.d("CalendarFragment", "Error fetching tasks: ${error.message}")
             }
         })
     }
 
+    // This whole function could be shortened by using an XML layout instead
     private fun addTaskToView(task: Task) {
         // Create a LinearLayout to hold the task details
         val taskLayout = LinearLayout(context).apply {
@@ -119,7 +114,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
             setTextColor(resources.getColor(R.color.black)) // Optional: text color
         }
 
-        // Add Title and Time to the tier layout
         titleAndTimeLayout.addView(titleView)
         titleAndTimeLayout.addView(timeView)
 
@@ -150,10 +144,9 @@ class CalendarFragment : Fragment(), View.OnClickListener {
             text = task.category.toString()
             textSize = 14f
             setPadding(0, 8, 0, 4)
-            setTextColor(resources.getColor(R.color.black)) // Optional: text color
+            setTextColor(resources.getColor(R.color.black))
         }
 
-        // Add Location, Priority, and Category to the tier layout
         locationPriorityCategoryLayout.addView(locationView)
         locationPriorityCategoryLayout.addView(priorityView)
         locationPriorityCategoryLayout.addView(categoryView)
@@ -171,7 +164,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         taskLayout.addView(locationPriorityCategoryLayout)
         taskLayout.addView(descriptionView)
 
-        // Add the task layout to the task container
         taskContainer.addView(taskLayout)
     }
 }
