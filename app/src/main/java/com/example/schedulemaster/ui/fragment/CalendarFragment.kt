@@ -27,37 +27,7 @@ class CalendarFragment : Fragment(), View.OnClickListener {
     private lateinit var taskContainer: LinearLayout
     private lateinit var databaseRef: DatabaseReference
     private lateinit var auth: FirebaseAuth
-
-    // Dummy data with actual dates
-    private val dummyTasks = listOf(
-        Task(
-            title = "Meeting with Bob",
-            date = "12/11/2024",  // Actual date for the task
-            time = "10:00",
-            description = "Discuss project updates",
-            location = Location(40.7128, -74.0060),
-            priority = Priority.HIGH,
-            category = Category.WORK
-        ),
-        Task(
-            title = "Workout session",
-            date = "12/11/2024",  // Actual date for the task
-            time = "14:00",
-            description = "Strength training at gym",
-            location = Location(40.7128, -74.0060),
-            priority = Priority.MEDIUM,
-            category = Category.FITNESS
-        ),
-        Task(
-            title = "Study for exam",
-            date = "15/11/2024",  // Another actual date
-            time = "17:00",
-            description = "Review chapters 5-8",
-            location = Location(40.7128, -74.0060),
-            priority = Priority.LOW,
-            category = Category.STUDY
-        )
-    )
+    private lateinit var userId: String
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -68,6 +38,7 @@ class CalendarFragment : Fragment(), View.OnClickListener {
 
         auth = FirebaseAuth.getInstance()
         databaseRef = FirebaseDatabase.getInstance().reference
+        userId = auth.currentUser?.uid ?: ""
 
         mHomeButton = v.findViewById(R.id.HomeButton)
         mHomeButton.setOnClickListener(this)
@@ -80,6 +51,7 @@ class CalendarFragment : Fragment(), View.OnClickListener {
             Log.d("Date sent to firebase:", date)
             loadTasksForDate(date)
         }
+
         return v
     }
 
@@ -94,12 +66,28 @@ class CalendarFragment : Fragment(), View.OnClickListener {
 
     private fun loadTasksForDate(date: String) {
         taskContainer.removeAllViews() // Clear previous tasks
-        // Loop through the dummy tasks and show tasks for the selected date
-        for (task in dummyTasks) {
-            if (task.date == date) {  // Check if the task date matches the selected date
-                addTaskToView(task)
+
+        // Query tasks for the logged-in user and the selected date
+        val tasksRef = databaseRef.child("users").child(userId).child("tasks")
+        tasksRef.addListenerForSingleValueEvent(object : ValueEventListener {
+            override fun onDataChange(snapshot: DataSnapshot) {
+                if (snapshot.exists()) {
+                    // Loop through tasks and check if the date matches
+                    for (taskSnapshot in snapshot.children) {
+                        val task = taskSnapshot.getValue(Task::class.java)
+                        if (task != null && task.date == date) {
+                            addTaskToView(task)
+                        }
+                    }
+                } else {
+                    Log.d("CalendarFragment", "No tasks found for this user.")
+                }
             }
-        }
+
+            override fun onCancelled(error: DatabaseError) {
+                Log.d("CalendarFragment", "Error fetching tasks: ${error.message}")
+            }
+        })
     }
 
     private fun addTaskToView(task: Task) {

@@ -11,7 +11,9 @@ enum class Category {
 data class Location(
     val latitude: Double,
     val longitude: Double
-)
+){
+    constructor() : this(0.0, 0.0)
+}
 
 data class Task(
     val title: String,
@@ -26,5 +28,5 @@ data class Task(
     // Check enum
     val category: Category
 ){
-
+    constructor() : this("", "", "", "", Location(), Priority.LOW, Category.OTHER)
 }
