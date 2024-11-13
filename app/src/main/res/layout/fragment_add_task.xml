@@ -2,13 +2,15 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:padding="8dp">
 
     <TextView
         android:id="@+id/Title"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Task Title" />
+        android:text="Task Title"
+        android:layout_marginTop="8dp" />
 
     <EditText
         android:id="@+id/TitleInput"
@@ -16,18 +18,21 @@
         android:layout_height="wrap_content"
         android:ems="10"
         android:inputType="text"
-        android:text="Title of Task" />
+        android:text="Title of Task"
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/DateTimeText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Date and Time" />
+        android:text="Date and Time"
+        android:layout_marginTop="8dp" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="45dp"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="8dp">
 
         <EditText
             android:id="@+id/editTextDate"
@@ -35,7 +40,8 @@
             android:layout_height="wrap_content"
             android:ems="10"
             android:inputType="date"
-            android:text="Date" />
+            android:text="Date"
+            android:layout_marginEnd="8dp" />
 
         <EditText
             android:id="@+id/editTextTime"
@@ -51,66 +57,77 @@
         android:id="@+id/DescriptionText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Description" />
+        android:text="Description"
+        android:layout_marginTop="8dp" />
 
     <EditText
         android:id="@+id/editTextDescription"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="150dp"
         android:ems="10"
         android:gravity="start|top"
-        android:inputType="textMultiLine" />
+        android:inputType="textMultiLine"
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/LocationText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Location" />
+        android:text="Location"
+        android:layout_marginTop="8dp" />
 
     <EditText
         android:id="@+id/editTextLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:ems="10"
-        android:inputType="textPostalAddress" />
+        android:inputType="textPostalAddress"
+        android:text="Current Location"
+        android:enabled="false"
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/PriorityText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Priority" />
+        android:text="Priority"
+        android:layout_marginTop="8dp" />
 
     <Spinner
         android:id="@+id/prioritySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
-        android:entries="@array/priority_options" />
-
+        android:entries="@array/priority_options"
+        android:layout_marginTop="8dp" />
 
     <TextView
         android:id="@+id/CategoryText"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Category" />
+        android:text="Category"
+        android:layout_marginTop="8dp" />
 
     <Spinner
         android:id="@+id/categorySpinner"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:spinnerMode="dropdown"
-        android:entries="@array/category_options" />
+        android:entries="@array/category_options"
+        android:layout_marginTop="8dp" />
 
     <Button
         android:id="@+id/submitButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Submit" />
+        android:text="Submit"
+        android:layout_marginTop="16dp" />
 
     <Button
         android:id="@+id/HomeButton"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Back To Home" />
+        android:text="Back To Home"
+        android:layout_marginTop="8dp" />
 
 </LinearLayout>
