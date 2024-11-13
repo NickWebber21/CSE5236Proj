@@ -14,13 +14,14 @@ import com.example.schedulemaster.ui.activity.CalendarActivity
 import com.example.schedulemaster.ui.activity.WelcomeActivity
 import com.google.firebase.auth.FirebaseAuth
 
+
+//-----------------------------Currently Unused---------------------------------
 class HomeFragment : Fragment(), View.OnClickListener {
 
     private lateinit var addTaskButton: Button
     private lateinit var logoutButton: Button
     private lateinit var calendarButton: Button
 
-    // Firebase Auth instance
     private lateinit var auth: FirebaseAuth
 
     override fun onCreateView(
@@ -30,7 +31,6 @@ class HomeFragment : Fragment(), View.OnClickListener {
     ): View {
         val v = inflater.inflate(R.layout.fragment_home, container, false)
 
-        // Initialize Firebase Auth
         auth = FirebaseAuth.getInstance()
 
         addTaskButton = v.findViewById(R.id.AddTaskButton)
