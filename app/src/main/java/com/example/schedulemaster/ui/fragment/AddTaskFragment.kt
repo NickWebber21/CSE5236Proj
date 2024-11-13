@@ -20,7 +20,6 @@ import com.example.schedulemaster.model.Category
 import com.example.schedulemaster.model.Location
 import com.example.schedulemaster.model.Priority
 import com.example.schedulemaster.model.Task
-import com.example.schedulemaster.ui.activity.CalendarActivity
 import com.example.schedulemaster.ui.activity.HomeActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
@@ -29,7 +28,6 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import java.io.IOException
 import java.util.*
-
 
 class AddTaskFragment : Fragment(), View.OnClickListener {
 
@@ -101,10 +99,12 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         categoryAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         categorySpinner.adapter = categoryAdapter
 
-        // Set default location to current location
+        // Set default location text to "Current Address"
+        locationInput.setText("Current Address")
+
+        // Get and store the actual current location details
         getCurrentLocation { location ->
             currentLocation = location
-            locationInput.setText("Lat: ${location.latitude}, Lon: ${location.longitude}")
         }
 
         return view
@@ -152,18 +152,8 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
                 else -> Category.OTHER
             }
 
-            val location = if (locationText.startsWith("Lat:")) {
-                currentLocation
-            } else {
-                geocodeAddress(requireContext(), locationText)
-            }
-
-            if (location == null) {
-                Toast.makeText(requireContext(), "Invalid address", Toast.LENGTH_SHORT).show()
-                return
-            }
-
-            createTask(userId, title, date, time, description, location, priority, category)
+            // Use currentLocation regardless of locationInput field for actual data
+            createTask(userId, title, date, time, description, currentLocation, priority, category)
         } else {
             Toast.makeText(requireContext(), "User not logged in", Toast.LENGTH_SHORT).show()
         }
@@ -188,8 +178,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     private fun getCurrentLocation(callback: (Location) -> Unit) {
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
-                val location = if (loc != null) {
-                    //Location(loc.latitude, loc.longitude)
+                if (loc != null) {
                     val geocoder = Geocoder(requireContext(), Locale.getDefault())
                     val addressList: List<Address>? = geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
                     val address = if (!addressList.isNullOrEmpty()) {
@@ -197,14 +186,13 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
                     } else {
                         "Address not available"
                     }
-                    // Create a Location object with latitude, longitude, and address
+
                     val location = Location(loc.latitude, loc.longitude, address)
+                    currentLocation = location // Store for use in database
                     callback(location)
                 } else {
                     callback(Location(0.0, 0.0, "Location unavailable"))
                 }
-
-                //callback(location)
             }
         } else {
             requestLocationPermission()
@@ -272,21 +260,5 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     private fun navigateToHome() {
         val intent = Intent(requireContext(), HomeActivity::class.java)
         startActivity(intent)
-    }
-
-    private fun geocodeAddress(context: Context, address: String): Location? {
-        val geocoder = Geocoder(context, Locale.getDefault())
-        return try {
-            val addresses: MutableList<Address>? = geocoder.getFromLocationName(address, 1)
-            if (addresses?.isNotEmpty() == true) {
-                val location = addresses?.get(0)
-                location?.let { Location(it.latitude, location.longitude) }
-            } else {
-                null
-            }
-        } catch (e: IOException) {
-            e.printStackTrace()
-            null
-        }
     }
 }
