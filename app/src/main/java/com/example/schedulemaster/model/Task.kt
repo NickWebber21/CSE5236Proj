@@ -18,16 +18,16 @@ data class Location(
 
 data class Task(
     val title: String,
-    // Storing in dd/MM/yyyy format for consistency
+    //storing in dd/MM/yyyy format for consistency
     val date: String,
-    // Storing in hh:MM format for consistency
+    //storing in hh:MM format for consistency
     val time: String,
     val description: String,
-    // Check model above
+    //check model above
     val location: Location,
-    // Check enum
+    //check enum
     val priority: Priority,
-    // Check enum
+    //check enum
     val category: Category
 ){
     constructor() : this("", "", "", "", Location(), Priority.LOW, Category.OTHER)
