@@ -51,7 +51,7 @@ class WelcomeFragment : Fragment(), View.OnClickListener {
                 val intent = Intent(requireContext(), CreateAccountActivity::class.java)
                 startActivity(intent)
             }
-            else -> Log.e("INSIDE WelcomeFragment.kt", "Error: Invalid button press")
+            else -> Log.e("WelcomeFragment.kt", "Error: Invalid button press")
         }
     }
 }

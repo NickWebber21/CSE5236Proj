@@ -10,14 +10,16 @@ import android.widget.Button
 import android.widget.CalendarView
 import android.widget.LinearLayout
 import android.widget.TextView
+import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.example.schedulemaster.R
 import com.example.schedulemaster.model.Task
 import com.example.schedulemaster.ui.activity.AddTaskActivity
 import com.example.schedulemaster.ui.activity.WelcomeActivity
+import com.example.schedulemaster.viewmodel.CalendarViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.database.*
-
 
 class CalendarFragment : Fragment(), View.OnClickListener {
 
@@ -25,77 +27,79 @@ class CalendarFragment : Fragment(), View.OnClickListener {
     private lateinit var logoutButton: Button
     private lateinit var calendarView: CalendarView
     private lateinit var taskContainer: LinearLayout
-    private lateinit var databaseRef: DatabaseReference
-    private lateinit var auth: FirebaseAuth
-    private lateinit var userId: String
-    //executes upon creating the fragment
+
+    private val viewModel: CalendarViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val v = inflater.inflate(R.layout.fragment_calendar, container, false)
-        //setup firebase refs and get user id
-        auth = FirebaseAuth.getInstance()
-        databaseRef = FirebaseDatabase.getInstance().reference
-        userId = auth.currentUser?.uid ?: ""
-        //bind views
+
         addTaskButton = v.findViewById(R.id.AddTaskButton)
         addTaskButton.setOnClickListener(this)
         logoutButton = v.findViewById(R.id.logoutButton)
         logoutButton.setOnClickListener(this)
         calendarView = v.findViewById(R.id.calendarView)
         taskContainer = v.findViewById(R.id.taskContainer)
-        //each time the user changes a date, load tasks
+
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val date = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
-            Log.d("Date sent to firebase:", date)
-            loadTasksForDate(date)
+            Log.d("CalendarFragment", "Selected date: $date")
+            viewModel.loadTasksForDate(date)
         }
+
+        observeViewModel()
+
         return v
     }
 
     override fun onClick(v: View) {
         when (v.id) {
-
             R.id.AddTaskButton -> {
                 val intent = Intent(requireContext(), AddTaskActivity::class.java)
                 startActivity(intent)
             }
-
-
             R.id.logoutButton -> {
-                auth.signOut()
+                FirebaseAuth.getInstance().signOut()
                 val intent = Intent(requireContext(), WelcomeActivity::class.java)
                 startActivity(intent)
             }
         }
     }
-    //load tasks for a specific date
-    private fun loadTasksForDate(date: String) {
-        taskContainer.removeAllViews()
-        val tasksRef = databaseRef.child("users").child(userId).child("tasks")
-        tasksRef.addListenerForSingleValueEvent(object : ValueEventListener {
-            override fun onDataChange(snapshot: DataSnapshot) {
-                if (snapshot.exists()) {
-                    for (taskSnapshot in snapshot.children) {
-                        val task = taskSnapshot.getValue(Task::class.java)
-                        if (task != null && task.date == date) {
-                            addTaskToView(task)
-                        }
-                    }
-                } else {
-                    Log.d("CalendarFragment", "No tasks found for this user.")
-                }
-            }
-            override fun onCancelled(error: DatabaseError) {
-                Log.d("CalendarFragment", "Error fetching tasks: ${error.message}")
+
+    private fun observeViewModel() {
+        viewModel.tasks.observe(viewLifecycleOwner, Observer { tasks ->
+            updateTaskContainer(tasks)
+        })
+
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
+            error?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                Log.e("CalendarFragment", it)
             }
         })
     }
 
-    //--------------------this function will be replace by a recycler view later-------------------
-    //adds a task to the display using native XML scroll list formatting
+    private fun updateTaskContainer(tasks: List<Task>) {
+        taskContainer.removeAllViews()
+        if (tasks.isEmpty()) {
+            val noTasksView = TextView(context).apply {
+                text = "No tasks for this date."
+                textSize = 16f
+                setTextColor(resources.getColor(R.color.black))
+            }
+            taskContainer.addView(noTasksView)
+        } else {
+            tasks.forEach { task ->
+                addTaskToView(task)
+            }
+        }
+    }
+
+    //--------------------this function will be replaced by a recycler view later-------------------
+//adds a task to the display using native XML scroll list formatting
     private fun addTaskToView(task: Task) {
         val taskLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -201,4 +205,5 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         }
         taskContainer.addView(divider)
     }
+
 }
