@@ -3,41 +3,52 @@ package com.example.schedulemaster.ui.fragment
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.Toast
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import com.example.schedulemaster.R
-import com.google.firebase.auth.FirebaseAuth
 import com.example.schedulemaster.ui.activity.CalendarActivity
+import com.example.schedulemaster.viewmodel.CreateAccountViewModel
 
 class CreateAccountFragment : Fragment(), View.OnClickListener {
 
     private lateinit var mEditUsernameText: EditText
     private lateinit var mEditPasswordText: EditText
     private lateinit var mCreateAccountButton: Button
-    private lateinit var auth: FirebaseAuth
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        auth = FirebaseAuth.getInstance()
-    }
-    //executes upon creating the fragment
+    private val viewModel: CreateAccountViewModel by viewModels()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         val v = inflater.inflate(R.layout.fragment_create_account, container, false)
-        Log.i("CreateAccountFragment", "onCreateView fragment started.")
-        //bind views
+
+        // Bind views
         mEditUsernameText = v.findViewById(R.id.usernameText)
         mEditPasswordText = v.findViewById(R.id.passwordText)
         mCreateAccountButton = v.findViewById(R.id.createAccountButton)
         mCreateAccountButton.setOnClickListener(this)
+
+        // Observe ViewModel
+        viewModel.accountCreationStatus.observe(viewLifecycleOwner, Observer { result ->
+            result.onSuccess { message ->
+                Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
+                val intent = Intent(requireContext(), CalendarActivity::class.java)
+                startActivity(intent)
+            }
+            result.onFailure { error ->
+                Log.e("CreateAccountFragment", "Account creation failed: ${error.message}")
+                Toast.makeText(requireContext(), "Account creation failed: ${error.message}", Toast.LENGTH_SHORT).show()
+            }
+        })
 
         return v
     }
@@ -47,28 +58,9 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
             R.id.createAccountButton -> {
                 val username = mEditUsernameText.text.toString().trim()
                 val password = mEditPasswordText.text.toString().trim()
-
-                if (username.isNotEmpty() && password.isNotEmpty()) {
-                    createAccount(username, password)
-                } else {
-                    Toast.makeText(requireContext(), "Please enter email and password", Toast.LENGTH_SHORT).show()
-                }
+                viewModel.createAccount(username, password)
             }
             else -> Log.e("CreateAccountFragment", "Error: Invalid button press")
         }
-    }
-    //creates an account using firebase auth
-    private fun createAccount(email: String, password: String) {
-        auth.createUserWithEmailAndPassword(email, password)
-            .addOnCompleteListener(requireActivity()) { task ->
-                if (task.isSuccessful) {
-                    Toast.makeText(requireContext(), "Account created successfully", Toast.LENGTH_SHORT).show()
-                    val intent = Intent(requireContext(), CalendarActivity::class.java)
-                    startActivity(intent);
-                } else {
-                    Log.e("CreateAccountFragment", "Account creation failed: ${task.exception?.message}")
-                    Toast.makeText(requireContext(), "Account creation failed: ${task.exception?.message}", Toast.LENGTH_SHORT).show()
-                }
-            }
     }
 }
