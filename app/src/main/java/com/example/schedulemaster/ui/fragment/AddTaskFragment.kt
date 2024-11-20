@@ -21,7 +21,6 @@ import com.example.schedulemaster.model.Location
 import com.example.schedulemaster.model.Priority
 import com.example.schedulemaster.model.Task
 import com.example.schedulemaster.ui.activity.CalendarActivity
-import com.example.schedulemaster.ui.activity.HomeActivity
 import com.google.android.gms.location.FusedLocationProviderClient
 import com.google.android.gms.location.LocationServices
 import com.google.firebase.auth.FirebaseAuth
