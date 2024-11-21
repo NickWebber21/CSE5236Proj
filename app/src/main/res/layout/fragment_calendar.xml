@@ -57,20 +57,10 @@
         android:textStyle="bold"
         android:textColor="?android:attr/textColorSecondary" />
 
-    <ScrollView
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/taskRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
-        android:padding="8dp">
-
-        <LinearLayout
-            android:id="@+id/taskContainer"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="8dp"
-            android:background="?android:attr/windowBackground"
-            android:divider="?android:attr/dividerHorizontal"
-            android:showDividers="middle" />
-    </ScrollView>
+        android:padding="8dp" />
 </LinearLayout>

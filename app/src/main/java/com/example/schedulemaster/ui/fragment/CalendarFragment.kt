@@ -8,12 +8,13 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.CalendarView
-import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.schedulemaster.R
 import com.example.schedulemaster.model.Task
 import com.example.schedulemaster.ui.activity.AddTaskActivity
@@ -26,7 +27,8 @@ class CalendarFragment : Fragment(), View.OnClickListener {
     private lateinit var addTaskButton: Button
     private lateinit var logoutButton: Button
     private lateinit var calendarView: CalendarView
-    private lateinit var taskContainer: LinearLayout
+    private lateinit var taskRecyclerView: RecyclerView
+    private lateinit var taskAdapter: TaskAdapter
 
     private val viewModel: CalendarViewModel by viewModels()
 
@@ -42,7 +44,8 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         logoutButton = v.findViewById(R.id.logoutButton)
         logoutButton.setOnClickListener(this)
         calendarView = v.findViewById(R.id.calendarView)
-        taskContainer = v.findViewById(R.id.taskContainer)
+        taskRecyclerView = v.findViewById(R.id.taskRecyclerView)
+        taskRecyclerView.layoutManager = LinearLayoutManager(context)
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val date = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
@@ -71,7 +74,8 @@ class CalendarFragment : Fragment(), View.OnClickListener {
 
     private fun observeViewModel() {
         viewModel.tasks.observe(viewLifecycleOwner, Observer { tasks ->
-            updateTaskContainer(tasks)
+            taskAdapter = TaskAdapter(tasks)
+            taskRecyclerView.adapter = taskAdapter
         })
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
@@ -82,128 +86,39 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         })
     }
 
-    private fun updateTaskContainer(tasks: List<Task>) {
-        taskContainer.removeAllViews()
-        if (tasks.isEmpty()) {
-            val noTasksView = TextView(context).apply {
-                text = "No tasks for this date."
-                textSize = 16f
-                setTextColor(resources.getColor(R.color.black))
-            }
-            taskContainer.addView(noTasksView)
-        } else {
-            tasks.forEach { task ->
-                addTaskToView(task)
-            }
+    private class TaskHolder(inflater: LayoutInflater, parent: ViewGroup?) :
+        RecyclerView.ViewHolder(inflater.inflate(R.layout.task_tile, parent, false)) {
+        private val titleView: TextView = itemView.findViewById(R.id.titleView)
+        private val timeView: TextView = itemView.findViewById(R.id.timeView)
+        private val addressView: TextView = itemView.findViewById(R.id.addressView)
+        private val priorityView: TextView = itemView.findViewById(R.id.priorityView)
+        private val categoryView: TextView = itemView.findViewById(R.id.categoryView)
+        private val descriptionView: TextView = itemView.findViewById(R.id.descriptionView)
+
+        fun bind(task: Task) {
+            titleView.text = task.title
+            timeView.text = task.time
+            addressView.text = task.location.address
+            priorityView.text = task.priority.toString()
+            categoryView.text = task.category.toString()
+            descriptionView.text = task.description
         }
     }
 
-    //--------------------this function will be replaced by a recycler view later-------------------
-//adds a task to the display using native XML scroll list formatting
-    private fun addTaskToView(task: Task) {
-        val taskLayout = LinearLayout(context).apply {
-            orientation = LinearLayout.VERTICAL
-            setPadding(16, 16, 16, 16)
-            layoutParams = ViewGroup.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.WRAP_CONTENT
-            )
+    private inner class TaskAdapter(private val tasks: List<Task>) :
+        RecyclerView.Adapter<TaskHolder>() {
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TaskHolder {
+            val inflater = layoutInflater
+            return TaskHolder(inflater, parent)
         }
 
-        val titleAndTimeLayout = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-            setPadding(0, 8, 0, 4)
+        override fun onBindViewHolder(holder: TaskHolder, position: Int) {
+            val task = tasks[position]
+            holder.bind(task)
         }
 
-        val titleView = TextView(context).apply {
-            text = task.title
-            textSize = 18f
-            setPadding(0, 8, 16, 4)
-            setTextColor(resources.getColor(R.color.black))
-            maxLines = Integer.MAX_VALUE
-            isSingleLine = false
-        }
-
-        val timeView = TextView(context).apply {
-            text = task.time
-            textSize = 16f
-            setPadding(0, 8, 0, 4)
-            setTextColor(resources.getColor(R.color.black))
-            maxLines = Integer.MAX_VALUE
-            isSingleLine = false
-        }
-
-        titleAndTimeLayout.addView(titleView)
-        titleAndTimeLayout.addView(timeView)
-
-        val addressLayout = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-            setPadding(0, 8, 0, 4)
-        }
-
-        val addressView = TextView(context).apply {
-            text = task.location.address
-            textSize = 14f
-            setPadding(0, 8, 16, 4)
-            setTextColor(resources.getColor(R.color.black))
-            maxLines = Integer.MAX_VALUE
-            isSingleLine = false
-        }
-
-        addressLayout.addView(addressView)
-
-        val priorityCategoryLayout = LinearLayout(context).apply {
-            orientation = LinearLayout.HORIZONTAL
-            setPadding(0, 8, 0, 4)
-        }
-
-        val priorityView = TextView(context).apply {
-            text = task.priority.toString()
-            textSize = 14f
-            setPadding(0, 8, 16, 4)
-            setTextColor(resources.getColor(R.color.black))
-            maxLines = Integer.MAX_VALUE
-            isSingleLine = false
-        }
-
-        val categoryView = TextView(context).apply {
-            text = task.category.toString()
-            textSize = 14f
-            setPadding(0, 8, 0, 4)
-            setTextColor(resources.getColor(R.color.black))
-            maxLines = Integer.MAX_VALUE
-            isSingleLine = false
-        }
-
-        priorityCategoryLayout.addView(priorityView)
-        priorityCategoryLayout.addView(categoryView)
-
-        val descriptionView = TextView(context).apply {
-            text = task.description
-            textSize = 14f
-            setPadding(0, 8, 0, 4)
-            setTextColor(resources.getColor(R.color.black))
-            maxLines = Integer.MAX_VALUE
-            isSingleLine = false
-        }
-
-        taskLayout.addView(titleAndTimeLayout)
-        taskLayout.addView(addressLayout)
-        taskLayout.addView(priorityCategoryLayout)
-        taskLayout.addView(descriptionView)
-
-        taskContainer.addView(taskLayout)
-
-        val divider = View(context).apply {
-            layoutParams = LinearLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                2
-            ).apply {
-                setMargins(16, 8, 16, 8)
-            }
-            setBackgroundColor(resources.getColor(R.color.purple_200))
-        }
-        taskContainer.addView(divider)
+        override fun getItemCount(): Int = tasks.size
     }
 
 }
