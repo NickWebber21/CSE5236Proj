@@ -38,7 +38,6 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     private lateinit var prioritySpinner: Spinner
     private lateinit var categorySpinner: Spinner
     private lateinit var submitButton: Button
-    private lateinit var homeButton: Button
     private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
     private lateinit var currentLocation: Location
@@ -63,10 +62,8 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         prioritySpinner = view.findViewById(R.id.prioritySpinner)
         categorySpinner = view.findViewById(R.id.categorySpinner)
         submitButton = view.findViewById(R.id.submitButton)
-        homeButton = view.findViewById(R.id.HomeButton)
 
         submitButton.setOnClickListener(this)
-        homeButton.setOnClickListener(this)
 
         dateInput.setOnClickListener { showDatePickerDialog() }
         timeInput.setOnClickListener { showTimePickerDialog() }
@@ -84,7 +81,6 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.submitButton -> submitTask()
-            R.id.HomeButton -> navigateToHome()
         }
     }
 
@@ -228,11 +224,6 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             hour, minute, true
         )
         timePickerDialog.show()
-    }
-
-    private fun navigateToHome() {
-        val intent = Intent(requireContext(), CalendarActivity::class.java)
-        startActivity(intent)
     }
 
     private fun geocodeAddress(context: Context, address: String): Location? {

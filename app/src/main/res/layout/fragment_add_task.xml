@@ -122,11 +122,4 @@
         android:text="Submit"
         android:layout_marginTop="16dp" />
 
-    <Button
-        android:id="@+id/HomeButton"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Back To Home"
-        android:layout_marginTop="8dp" />
-
 </LinearLayout>
