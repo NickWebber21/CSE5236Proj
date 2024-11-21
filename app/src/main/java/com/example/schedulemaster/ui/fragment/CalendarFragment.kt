@@ -47,6 +47,9 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         taskRecyclerView = v.findViewById(R.id.taskRecyclerView)
         taskRecyclerView.layoutManager = LinearLayoutManager(context)
 
+        taskAdapter = TaskAdapter(emptyList())
+        taskRecyclerView.adapter = taskAdapter
+
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
             val date = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
             Log.d("CalendarFragment", "Selected date: $date")
@@ -120,5 +123,4 @@ class CalendarFragment : Fragment(), View.OnClickListener {
 
         override fun getItemCount(): Int = tasks.size
     }
-
 }
