@@ -2,12 +2,8 @@ package com.example.schedulemaster.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
 
-class CreateAccountViewModel : ViewModel() {
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
+class CreateAccountViewModel : AuthViewModel() {
     private val _accountCreationStatus = MutableLiveData<Result<String>>()
     val accountCreationStatus: LiveData<Result<String>> get() = _accountCreationStatus
 
@@ -20,9 +16,21 @@ class CreateAccountViewModel : ViewModel() {
         auth.createUserWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _accountCreationStatus.value = Result.success("Account created successfully")
+                    sendEmailVerification()
                 } else {
                     _accountCreationStatus.value = Result.failure(task.exception ?: Exception("Unknown error"))
+                }
+            }
+    }
+
+    private fun sendEmailVerification() {
+        val user = auth.currentUser
+        user?.sendEmailVerification()
+            ?.addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    _accountCreationStatus.value = Result.success("Verification email sent")
+                } else {
+                    _accountCreationStatus.value = Result.failure(task.exception ?: Exception("Failed to send verification email"))
                 }
             }
     }

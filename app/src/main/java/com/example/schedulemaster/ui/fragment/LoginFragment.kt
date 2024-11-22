@@ -45,16 +45,15 @@ class LoginFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.loginButton -> {
-                val username = mEditUsernameText.text.toString().trim()
+                val email = mEditUsernameText.text.toString().trim()
                 val password = mEditPasswordText.text.toString().trim()
 
-                if (username.isNotEmpty() && password.isNotEmpty()) {
-                    viewModel.signIn(username, password)
+                if (email.isNotEmpty() && password.isNotEmpty()) {
+                    viewModel.signIn(email, password)
                 } else {
-                    Toast.makeText(requireContext(), "Please enter email and password", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Please enter your email and password", Toast.LENGTH_SHORT).show()
                 }
             }
-            else -> Log.e("LoginFragment", "Error: Invalid button press")
         }
     }
 
