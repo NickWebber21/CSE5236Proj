@@ -20,6 +20,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
 
     private lateinit var mEditUsernameText: EditText
     private lateinit var mEditPasswordText: EditText
+    private lateinit var mVerificationCodeText: EditText
     private lateinit var mLoginButton: Button
 
     private val viewModel: LoginViewModel by viewModels()
@@ -34,6 +35,7 @@ class LoginFragment : Fragment(), View.OnClickListener {
 
         mEditUsernameText = v.findViewById(R.id.usernameText)
         mEditPasswordText = v.findViewById(R.id.passwordText)
+        mVerificationCodeText = v.findViewById(R.id.verificationCodeText)
         mLoginButton = v.findViewById(R.id.loginButton)
         mLoginButton.setOnClickListener(this)
 
@@ -45,16 +47,17 @@ class LoginFragment : Fragment(), View.OnClickListener {
     override fun onClick(v: View) {
         when (v.id) {
             R.id.loginButton -> {
-                val username = mEditUsernameText.text.toString().trim()
+                val email = mEditUsernameText.text.toString().trim()
                 val password = mEditPasswordText.text.toString().trim()
+                val verificationCode = mVerificationCodeText.text.toString().trim()
 
-                if (username.isNotEmpty() && password.isNotEmpty()) {
-                    viewModel.signIn(username, password)
+                if (email.isNotEmpty() && password.isNotEmpty() && verificationCode.isNotEmpty()) {
+                    viewModel.signInWithEmail(email, password)
+                    viewModel.verifyCode(verificationCode)
                 } else {
-                    Toast.makeText(requireContext(), "Please enter email and password", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(requireContext(), "Please enter all fields", Toast.LENGTH_SHORT).show()
                 }
             }
-            else -> Log.e("LoginFragment", "Error: Invalid button press")
         }
     }
 

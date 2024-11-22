@@ -41,6 +41,27 @@
             android:hint="Password"
             android:inputType="text" />
 
+        <EditText
+            android:id="@+id/phoneNumberText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Phone Number: +1 650-555-1234"
+            android:inputType="phone" />
+
+        <EditText
+            android:id="@+id/verificationCodeText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Verification Code"
+            android:inputType="number" />
+
+        <Button
+            android:id="@+id/verifyCodeButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom|center"
+            android:text="Verify"/>
+
         <Button
             android:id="@+id/createAccountButton"
             android:layout_width="match_parent"

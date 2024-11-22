@@ -20,7 +20,10 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
 
     private lateinit var mEditUsernameText: EditText
     private lateinit var mEditPasswordText: EditText
+    private lateinit var mPhoneNumberText: EditText
+    private lateinit var mVerificationCodeText: EditText
     private lateinit var mCreateAccountButton: Button
+    private lateinit var mVerifyCodeButton: Button
 
     private val viewModel: CreateAccountViewModel by viewModels()
 
@@ -34,10 +37,31 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
         // Bind views
         mEditUsernameText = v.findViewById(R.id.usernameText)
         mEditPasswordText = v.findViewById(R.id.passwordText)
+        mPhoneNumberText = v.findViewById(R.id.phoneNumberText)
+        mVerificationCodeText = v.findViewById(R.id.verificationCodeText)
         mCreateAccountButton = v.findViewById(R.id.createAccountButton)
+        mVerifyCodeButton = v.findViewById(R.id.verifyCodeButton)
         mCreateAccountButton.setOnClickListener(this)
+        mVerifyCodeButton.setOnClickListener(this)
 
         // Observe ViewModel
+        viewModel.verificationId.observe(viewLifecycleOwner, Observer { verificationId ->
+            verificationId?.let {
+                // Show the verification code input field and verify button
+                mVerificationCodeText.visibility = View.VISIBLE
+                mVerifyCodeButton.visibility = View.VISIBLE
+            }
+        })
+
+        viewModel.verificationStatus.observe(viewLifecycleOwner, Observer { isVerified ->
+            if (isVerified) {
+                val username = mEditUsernameText.text.toString().trim()
+                val password = mEditPasswordText.text.toString().trim()
+                val phoneNumber = mPhoneNumberText.text.toString().trim()
+                viewModel.createAccount(username, password, phoneNumber)
+            }
+        })
+
         viewModel.accountCreationStatus.observe(viewLifecycleOwner, Observer { result ->
             result.onSuccess { message ->
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()
@@ -50,17 +74,34 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
             }
         })
 
+        viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
+            error?.let {
+                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
+                Log.e("CreateAccountFragment", it)
+            }
+        })
+
         return v
     }
 
     override fun onClick(v: View) {
         when (v.id) {
             R.id.createAccountButton -> {
-                val username = mEditUsernameText.text.toString().trim()
-                val password = mEditPasswordText.text.toString().trim()
-                viewModel.createAccount(username, password)
+                val phoneNumber = mPhoneNumberText.text.toString().trim()
+                if (phoneNumber.isNotEmpty()) {
+                    viewModel.sendVerificationCode(phoneNumber, requireActivity())
+                } else {
+                    Toast.makeText(requireContext(), "Please enter your phone number", Toast.LENGTH_SHORT).show()
+                }
             }
-            else -> Log.e("CreateAccountFragment", "Error: Invalid button press")
+            R.id.verifyCodeButton -> {
+                val verificationCode = mVerificationCodeText.text.toString().trim()
+                if (verificationCode.isNotEmpty()) {
+                    viewModel.verifyCode(verificationCode)
+                } else {
+                    Toast.makeText(requireContext(), "Please enter the verification code", Toast.LENGTH_SHORT).show()
+                }
+            }
         }
     }
 }
