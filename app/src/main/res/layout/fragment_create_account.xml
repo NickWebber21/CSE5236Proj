@@ -1,9 +1,8 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".ui.fragment.LoginFragment">
+    tools:context=".ui.fragment.CreateAccountFragment">
 
     <ImageView
         android:id="@+id/welcomeImage"
@@ -31,36 +30,15 @@
             android:id="@+id/usernameText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Username"
-            android:inputType="text" />
+            android:hint="Email"
+            android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/passwordText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Password"
-            android:inputType="text" />
-
-        <EditText
-            android:id="@+id/phoneNumberText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Phone Number: +1 650-555-1234"
-            android:inputType="phone" />
-
-        <EditText
-            android:id="@+id/verificationCodeText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:hint="Verification Code"
-            android:inputType="number" />
-
-        <Button
-            android:id="@+id/verifyCodeButton"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom|center"
-            android:text="Verify"/>
+            android:inputType="textPassword" />
 
         <Button
             android:id="@+id/createAccountButton"
@@ -68,8 +46,5 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|center"
             android:text="Create Account"/>
-
-
     </LinearLayout>
-
 </RelativeLayout>
