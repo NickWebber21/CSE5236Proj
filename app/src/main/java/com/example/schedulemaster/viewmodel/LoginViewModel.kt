@@ -12,7 +12,14 @@ class LoginViewModel : AuthViewModel() {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    _loginStatus.value = true
+                    val user = auth.currentUser
+                    if (user != null && user.isEmailVerified) {
+                        _loginStatus.value = true
+                    } else {
+                        _loginStatus.value = false
+                        _errorMessage.value = "Email not verified. Please verify your email before logging in."
+                        auth.signOut()
+                    }
                 } else {
                     _loginStatus.value = false
                     _errorMessage.value = task.exception?.message

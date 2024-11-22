@@ -28,8 +28,7 @@ class CreateAccountViewModel : AuthViewModel() {
         user?.sendEmailVerification()
             ?.addOnCompleteListener { task ->
                 if (task.isSuccessful) {
-                    auth.signOut() // Sign out the user after sending the verification email
-                    _accountCreationStatus.value = Result.success("Verification email sent. Please verify your email before logging in.")
+                    _accountCreationStatus.value = Result.success("Verification email sent")
                 } else {
                     _accountCreationStatus.value = Result.failure(task.exception ?: Exception("Failed to send verification email"))
                 }
