@@ -11,16 +11,16 @@ import com.google.firebase.auth.PhoneAuthOptions
 import com.google.firebase.auth.PhoneAuthProvider
 import java.util.concurrent.TimeUnit
 
-class AuthViewModel : ViewModel() {
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
+open class AuthViewModel : ViewModel() {
+    protected val auth: FirebaseAuth = FirebaseAuth.getInstance()
 
-    private val _authStatus = MutableLiveData<Boolean>()
+    protected val _authStatus = MutableLiveData<Boolean>()
     val authStatus: LiveData<Boolean> get() = _authStatus
 
-    private val _errorMessage = MutableLiveData<String?>()
+    protected val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
-    private val _verificationId = MutableLiveData<String?>()
+    protected val _verificationId = MutableLiveData<String?>()
     val verificationId: LiveData<String?> get() = _verificationId
 
     fun sendVerificationCode(phoneNumber: String, activity: Activity) {
@@ -45,7 +45,6 @@ class AuthViewModel : ViewModel() {
         PhoneAuthProvider.verifyPhoneNumber(options)
     }
 
-    // Verify the code entered by the user
     fun verifyCode(code: String) {
         val credential = PhoneAuthProvider.getCredential(_verificationId.value!!, code)
         signInWithPhoneAuthCredential(credential)
@@ -63,7 +62,6 @@ class AuthViewModel : ViewModel() {
             }
     }
 
-    // Handle email sign-in
     fun signInWithEmail(email: String, password: String) {
         auth.signInWithEmailAndPassword(email, password)
             .addOnCompleteListener { task ->

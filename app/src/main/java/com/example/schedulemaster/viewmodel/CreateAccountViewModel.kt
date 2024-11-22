@@ -2,12 +2,8 @@ package com.example.schedulemaster.viewmodel
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
-import com.google.firebase.auth.FirebaseAuth
 
-class CreateAccountViewModel : ViewModel() {
-    private val auth: FirebaseAuth = FirebaseAuth.getInstance()
-
+class CreateAccountViewModel : AuthViewModel() {
     private val _accountCreationStatus = MutableLiveData<Result<String>>()
     val accountCreationStatus: LiveData<Result<String>> get() = _accountCreationStatus
 
