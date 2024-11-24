@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.firebase.auth)
     implementation(libs.play.services.location)
     implementation(libs.firebase.auth.ktx)
+    implementation(libs.androidx.espresso.intents)
     val fragment_version = "1.8.4"
 
     // Java language implementation
