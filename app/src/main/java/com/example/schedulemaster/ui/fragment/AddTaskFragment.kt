@@ -15,6 +15,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.schedulemaster.model.Location
 import com.example.schedulemaster.R
 import com.example.schedulemaster.model.Category
 import com.example.schedulemaster.model.Priority
@@ -60,17 +61,17 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
 
         setupSpinners()
 
-        taskViewModel.location.observe(viewLifecycleOwner, Observer { location ->
-            location?.let {
-                locationInput.setText("Lat: ${it.latitude}, Lon: ${it.longitude}")
-            }
-        })
-
         if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             taskViewModel.getCurrentLocation(requireContext())
         } else {
             requestLocationPermission()
         }
+
+        taskViewModel.location.observe(viewLifecycleOwner, Observer { location ->
+            location?.let {
+                locationInput.setText("Lat: ${it.latitude}, Lon: ${it.longitude}")
+            }
+        })
 
         return view
     }

@@ -33,20 +33,22 @@ class AddTaskViewModel(application: Application) : AndroidViewModel(application)
     fun getCurrentLocation(context: Context) {
         if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
             fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
-                loc?.let {
-                    _location.value = Location(
-                        it.latitude,
-                        it.longitude,
-                        "Current Location"
-                    )
-                } ?: run {
-                    _location.value = null
+                val location = if (loc != null) {
+                    val geocoder = Geocoder(context, Locale.getDefault())
+                    val addressList: List<Address>? = geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
+                    val address = if (!addressList.isNullOrEmpty()) {
+                        addressList[0].getAddressLine(0) // Get the full address
+                    } else {
+                        "Address not available"
+                    }
+                    Location(loc.latitude, loc.longitude, address)
+                } else {
+                    Location(0.0, 0.0, "Location unavailable")
                 }
-            }.addOnFailureListener {
-                _location.value = null
+                _location.value = location
             }
         } else {
-            _location.value = null
+            _location.value = Location(0.0, 0.0, "Permission not granted")
         }
     }
 
@@ -56,9 +58,10 @@ class AddTaskViewModel(application: Application) : AndroidViewModel(application)
             val addressList: MutableList<Address>? = geocoder.getFromLocationName(address, 1)
             if (!addressList.isNullOrEmpty()) {
                 val latLngAddress = addressList[0]
+                val fullAddress = latLngAddress.getAddressLine(0)
                 val latitude = latLngAddress.latitude
                 val longitude = latLngAddress.longitude
-                Location(latitude, longitude, address)
+                Location(latitude, longitude, fullAddress)
             } else {
                 null
             }
