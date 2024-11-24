@@ -11,6 +11,9 @@
       <SelectionState runConfigName="Tests in 'com.example.schedulemaster'">
         <option name="selectionMode" value="DROPDOWN" />
       </SelectionState>
+      <SelectionState runConfigName="CalendarPageUITest">
+        <option name="selectionMode" value="DROPDOWN" />
+      </SelectionState>
     </selectionStates>
   </component>
 </project>
