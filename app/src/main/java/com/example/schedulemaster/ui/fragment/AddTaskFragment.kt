@@ -5,8 +5,6 @@ import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.location.Address
-import android.location.Geocoder
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -15,17 +13,15 @@ import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import com.example.schedulemaster.model.Location
 import com.example.schedulemaster.R
 import com.example.schedulemaster.model.Category
-import com.example.schedulemaster.model.Location
 import com.example.schedulemaster.model.Priority
 import com.example.schedulemaster.ui.activity.CalendarActivity
 import com.example.schedulemaster.viewmodel.AddTaskViewModel
-import com.google.android.gms.location.FusedLocationProviderClient
-import com.google.android.gms.location.LocationServices
 
-import java.io.IOException
 import java.util.*
 
 class AddTaskFragment : Fragment(), View.OnClickListener {
@@ -38,9 +34,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
     private lateinit var prioritySpinner: Spinner
     private lateinit var categorySpinner: Spinner
     private lateinit var submitButton: Button
-    private lateinit var fusedLocationClient: FusedLocationProviderClient
     private val LOCATION_PERMISSION_REQUEST_CODE = 1000
-    private lateinit var currentLocation: Location
     private lateinit var taskViewModel: AddTaskViewModel
 
     override fun onCreateView(
@@ -50,9 +44,6 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         val view = inflater.inflate(R.layout.fragment_add_task, container, false)
 
         taskViewModel = ViewModelProvider(this).get(AddTaskViewModel::class.java)
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireContext())
-        requestLocationPermission()
 
         titleInput = view.findViewById(R.id.TitleInput)
         dateInput = view.findViewById(R.id.editTextDate)
@@ -70,10 +61,17 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
 
         setupSpinners()
 
-        getCurrentLocation { location ->
-            currentLocation = location
-            locationInput.setText("Lat: ${location.latitude}, Lon: ${location.longitude}")
+        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+            taskViewModel.getCurrentLocation(requireContext())
+        } else {
+            requestLocationPermission()
         }
+
+        taskViewModel.location.observe(viewLifecycleOwner, Observer { location ->
+            location?.let {
+                locationInput.setText("Lat: ${it.latitude}, Lon: ${it.longitude}")
+            }
+        })
 
         return view
     }
@@ -115,9 +113,9 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         }
 
         val location = if (locationText.startsWith("Lat:")) {
-            currentLocation
+            taskViewModel.location.value
         } else {
-            geocodeAddress(requireContext(), locationText)
+            taskViewModel.geocodeAddress(requireContext(), locationText)
         }
 
         if (location == null) {
@@ -148,28 +146,6 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         categorySpinner.adapter = categoryAdapter
     }
 
-    private fun getCurrentLocation(callback: (Location) -> Unit) {
-        if (ContextCompat.checkSelfPermission(requireContext(), android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
-            fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
-                val location = if (loc != null) {
-                    val geocoder = Geocoder(requireContext(), Locale.getDefault())
-                    val addressList: List<Address>? = geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
-                    val address = if (!addressList.isNullOrEmpty()) {
-                        addressList[0].getAddressLine(0)
-                    } else {
-                        "Address not available"
-                    }
-                    Location(loc.latitude, loc.longitude, address)
-                } else {
-                    Location(0.0, 0.0, "Location unavailable")
-                }
-                callback(location)
-            }
-        } else {
-            requestLocationPermission()
-        }
-    }
-
     private fun requestLocationPermission() {
         if (ActivityCompat.shouldShowRequestPermissionRationale(requireActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION)) {
             Toast.makeText(requireContext(), "Location permission is required to access your current location", Toast.LENGTH_SHORT).show()
@@ -185,8 +161,7 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == LOCATION_PERMISSION_REQUEST_CODE) {
             if (grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                Toast.makeText(requireContext(), "Permission granted, retrieving location...", Toast.LENGTH_SHORT).show()
-                getCurrentLocation { location -> }
+                taskViewModel.getCurrentLocation(requireContext())
             } else {
                 Toast.makeText(requireContext(), "Permission denied, unable to get location", Toast.LENGTH_SHORT).show()
             }
@@ -224,22 +199,5 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             hour, minute, true
         )
         timePickerDialog.show()
-    }
-
-    private fun geocodeAddress(context: Context, address: String): Location? {
-        val geocoder = Geocoder(context, Locale.getDefault())
-        return try {
-            val addressList: MutableList<Address>? = geocoder.getFromLocationName(address, 1)
-            if (!addressList.isNullOrEmpty()) {
-                val latLngAddress = addressList[0]
-                val latitude = latLngAddress.latitude
-                val longitude = latLngAddress.longitude
-                Location(latitude, longitude, address)
-            } else {
-                null
-            }
-        } catch (e: IOException) {
-            null
-        }
     }
 }
