@@ -73,8 +73,12 @@ class AddTaskViewModel(application: Application) : AndroidViewModel(application)
     fun submitTask(title: String, date: String, time: String, description: String, location: Location, priority: Priority, category: Category) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
+            val formattedDate = date.replace("/", "-")
             val task = Task(title, date, time, description, location, priority, category)
-            databaseRef.child("users").child(userId).child("tasks").push().setValue(task)
+            val taskId = databaseRef.push().key
+            if (taskId != null) {
+                databaseRef.child("users").child(userId).child("tasks").child(formattedDate).child(taskId).setValue(task)
+            }
         }
     }
 }

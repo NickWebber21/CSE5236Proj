@@ -18,15 +18,21 @@ class CalendarViewModel : ViewModel() {
     private val _errorMessage = MutableLiveData<String?>()
     val errorMessage: LiveData<String?> get() = _errorMessage
 
+
     fun loadTasksForDate(date: String) {
-        val tasksRef = databaseRef.child("users").child(userId).child("tasks")
-        tasksRef.addListenerForSingleValueEvent(object : ValueEventListener {
+        if (userId.isEmpty()) {
+            _errorMessage.value = "User is not authenticated."
+            return
+        }
+
+        val tasksRef = databaseRef.child("users").child(userId).child("tasks").child(date)
+        tasksRef.addValueEventListener(object : ValueEventListener {
             override fun onDataChange(snapshot: DataSnapshot) {
                 val taskList = mutableListOf<Task>()
                 if (snapshot.exists()) {
                     for (taskSnapshot in snapshot.children) {
                         val task = taskSnapshot.getValue(Task::class.java)
-                        if (task != null && task.date == date) {
+                        if (task != null) {
                             taskList.add(task)
                         }
                     }

@@ -45,7 +45,7 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         taskContainer = v.findViewById(R.id.taskContainer)
 
         calendarView.setOnDateChangeListener { _, year, month, dayOfMonth ->
-            val date = String.format("%02d/%02d/%04d", dayOfMonth, month + 1, year)
+            val date = String.format("%02d-%02d-%04d", dayOfMonth, month + 1, year)
             Log.d("CalendarFragment", "Selected date: $date")
             viewModel.loadTasksForDate(date)
         }
@@ -70,10 +70,12 @@ class CalendarFragment : Fragment(), View.OnClickListener {
     }
 
     private fun observeViewModel() {
+        // Observe LiveData for tasks
         viewModel.tasks.observe(viewLifecycleOwner, Observer { tasks ->
             updateTaskContainer(tasks)
         })
 
+        // Observe LiveData for errors
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
             error?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
@@ -99,7 +101,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
     }
 
     //--------------------this function will be replaced by a recycler view later-------------------
-//adds a task to the display using native XML scroll list formatting
     private fun addTaskToView(task: Task) {
         val taskLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
@@ -205,5 +206,4 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         }
         taskContainer.addView(divider)
     }
-
 }
