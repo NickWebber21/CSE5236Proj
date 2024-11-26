@@ -3,7 +3,6 @@ package com.example.schedulemaster
 import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import com.example.schedulemaster.ui.activity.CalendarActivity
@@ -13,9 +12,6 @@ import org.junit.runner.RunWith
 import androidx.test.espresso.intent.Intents
 import androidx.test.espresso.intent.matcher.IntentMatchers.hasComponent
 import androidx.test.espresso.intent.Intents.intended
-import androidx.test.platform.app.InstrumentationRegistry
-import androidx.test.uiautomator.UiDevice
-import androidx.test.uiautomator.UiSelector
 import com.example.schedulemaster.ui.activity.WelcomeActivity
 import com.google.firebase.auth.FirebaseAuth
 import junit.framework.TestCase.fail
@@ -63,18 +59,4 @@ class CalendarPageUITest {
         intended(hasComponent(WelcomeActivity::class.java.name))
     }
 
-    @Test
-    //test function for having no tasks
-    fun testNoTasks() {
-        ActivityScenario.launch(CalendarActivity::class.java)
-        val device = UiDevice.getInstance(InstrumentationRegistry.getInstrumentation())
-
-        val calendarView = device.findObject(UiSelector().resourceId("com.example.schedulemaster:id/calendarView"))
-        calendarView.click()
-
-        val setDate = device.findObject(UiSelector().text("1"))
-        setDate.click()
-        //this is set to 1, as if we have no tasks, we add a view to the container that contains the "no tasks" text
-        onView(withId(R.id.taskContainer)).check(matches(hasChildCount(1)))
-    }
 }

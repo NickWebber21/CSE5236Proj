@@ -24,18 +24,26 @@ import java.util.*
 class AddTaskViewModel(application: Application) : AndroidViewModel(application) {
 
     private val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
-
-    private val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
+    private val fusedLocationClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(application)
 
     private val _location = MutableLiveData<Location?>()
     val location: LiveData<Location?> get() = _location
 
+    private val _taskSubmissionStatus = MutableLiveData<Result<String>>()
+    val taskSubmissionStatus: LiveData<Result<String>> get() = _taskSubmissionStatus
+
     fun getCurrentLocation(context: Context) {
-        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
                 val location = if (loc != null) {
                     val geocoder = Geocoder(context, Locale.getDefault())
-                    val addressList: List<Address>? = geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
+                    val addressList: List<Address>? =
+                        geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
                     val address = if (!addressList.isNullOrEmpty()) {
                         addressList[0].getAddressLine(0) // Get the full address
                     } else {
@@ -70,15 +78,64 @@ class AddTaskViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun submitTask(title: String, date: String, time: String, description: String, location: Location, priority: Priority, category: Category) {
+    fun validateInputs(
+        title: String, date: String, time: String, description: String, locationText: String
+    ): Result<Map<String, String>> {
+        val inputs = mapOf(
+            "title" to title,
+            "date" to date,
+            "time" to time,
+            "description" to description,
+            "locationText" to locationText
+        )
+
+        for ((key, value) in inputs) {
+            if (value.isEmpty()) {
+                return Result.failure(Exception("$key is required"))
+            }
+        }
+
+        return Result.success(inputs)
+    }
+
+    fun prepareTaskDetails(
+        inputs: Map<String, String>,
+        priority: Priority,
+        category: Category,
+        context: Context
+    ): Result<Task> {
+        val (title, date, time, description, locationText) = inputs.values.toList()
+
+        val location = if (locationText.startsWith("Lat:")) {
+            _location.value
+        } else {
+            geocodeAddress(context, locationText)
+        }
+        if (location == null) {
+            return Result.failure(Exception("Invalid address"))
+        }
+        val task = Task(title, date, time, description, location, priority, category)
+        return Result.success(task)
+    }
+
+    fun submitTask(task: Task, date: String) {
         val userId = FirebaseAuth.getInstance().currentUser?.uid
         if (userId != null) {
             val formattedDate = date.replace("/", "-")
-            val task = Task(title, date, time, description, location, priority, category)
             val taskId = databaseRef.push().key
             if (taskId != null) {
-                databaseRef.child("users").child(userId).child("tasks").child(formattedDate).child(taskId).setValue(task)
+                databaseRef.child("users").child(userId).child("tasks").child(formattedDate)
+                    .child(taskId).setValue(task)
+                    .addOnSuccessListener {
+                        _taskSubmissionStatus.value = Result.success("Task submitted successfully")
+                    }
+                    .addOnFailureListener {
+                        _taskSubmissionStatus.value = Result.failure(it)
+                    }
             }
+        } else {
+            _taskSubmissionStatus.value = Result.failure(Exception("User not authenticated"))
         }
     }
 }
+

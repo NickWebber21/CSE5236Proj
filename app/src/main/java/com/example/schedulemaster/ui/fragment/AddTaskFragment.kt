@@ -2,7 +2,6 @@ package com.example.schedulemaster.ui.fragment
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -15,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.schedulemaster.model.Location
 import com.example.schedulemaster.R
 import com.example.schedulemaster.model.Category
 import com.example.schedulemaster.model.Priority
@@ -89,21 +87,14 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
         val description = descriptionInput.text.toString().trim()
         val locationText = locationInput.text.toString().trim()
 
-        if (title.isEmpty() || date.isEmpty() || time.isEmpty() || description.isEmpty() || locationText.isEmpty()) {
-            Toast.makeText(requireContext(), "All fields must be filled", Toast.LENGTH_SHORT).show()
-            return
-        }
-
-        val priorityString = prioritySpinner.selectedItem.toString()
-        val priority = when (priorityString) {
+        val priority = when (prioritySpinner.selectedItem.toString()) {
             "Low" -> Priority.LOW
             "Medium" -> Priority.MEDIUM
             "High" -> Priority.HIGH
             else -> Priority.LOW
         }
 
-        val categoryString = categorySpinner.selectedItem.toString()
-        val category = when (categoryString) {
+        val category = when (categorySpinner.selectedItem.toString()) {
             "Work" -> Category.WORK
             "Personal" -> Category.PERSONAL
             "Study" -> Category.STUDY
@@ -112,20 +103,28 @@ class AddTaskFragment : Fragment(), View.OnClickListener {
             else -> Category.OTHER
         }
 
-        val location = if (locationText.startsWith("Lat:")) {
-            taskViewModel.location.value
-        } else {
-            taskViewModel.geocodeAddress(requireContext(), locationText)
-        }
-
-        if (location == null) {
-            Toast.makeText(requireContext(), "Invalid address", Toast.LENGTH_SHORT).show()
+        val validationResult = taskViewModel.validateInputs(title, date, time, description, locationText)
+        if (validationResult.isFailure) {
+            Toast.makeText(requireContext(), validationResult.exceptionOrNull()?.message, Toast.LENGTH_SHORT).show()
             return
         }
 
-        taskViewModel.submitTask(title, date, time, description, location, priority, category)
-        val intent = Intent(requireContext(), CalendarActivity::class.java)
-        startActivity(intent)
+        val prepareResult = taskViewModel.prepareTaskDetails(validationResult.getOrNull()!!, priority, category, requireContext())
+        if (prepareResult.isFailure) {
+            Toast.makeText(requireContext(), prepareResult.exceptionOrNull()?.message, Toast.LENGTH_SHORT).show()
+            return
+        }
+
+        taskViewModel.submitTask(prepareResult.getOrNull()!!, date)
+
+        taskViewModel.taskSubmissionStatus.observe(viewLifecycleOwner) { result ->
+            if (result.isSuccess) {
+                Toast.makeText(requireContext(), result.getOrNull(), Toast.LENGTH_SHORT).show()
+                startActivity(Intent(requireContext(), CalendarActivity::class.java))
+            } else {
+                Toast.makeText(requireContext(), result.exceptionOrNull()?.message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     private fun setupSpinners() {

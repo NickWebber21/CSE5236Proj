@@ -10,7 +10,6 @@ import android.widget.Button
 import android.widget.CalendarView
 import android.widget.LinearLayout
 import android.widget.TextView
-import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -70,15 +69,12 @@ class CalendarFragment : Fragment(), View.OnClickListener {
     }
 
     private fun observeViewModel() {
-        // Observe LiveData for tasks
         viewModel.tasks.observe(viewLifecycleOwner, Observer { tasks ->
             updateTaskContainer(tasks)
         })
 
-        // Observe LiveData for errors
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
             error?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 Log.e("CalendarFragment", it)
             }
         })
@@ -100,7 +96,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    //--------------------this function will be replaced by a recycler view later-------------------
     private fun addTaskToView(task: Task) {
         val taskLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
