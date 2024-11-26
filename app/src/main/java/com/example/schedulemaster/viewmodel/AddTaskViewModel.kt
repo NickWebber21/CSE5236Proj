@@ -24,7 +24,8 @@ import java.util.*
 class AddTaskViewModel(application: Application) : AndroidViewModel(application) {
 
     private val databaseRef: DatabaseReference = FirebaseDatabase.getInstance().reference
-    private val fusedLocationClient: FusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(application)
+    private val fusedLocationClient: FusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(application)
 
     private val _location = MutableLiveData<Location?>()
     val location: LiveData<Location?> get() = _location
@@ -33,11 +34,16 @@ class AddTaskViewModel(application: Application) : AndroidViewModel(application)
     val taskSubmissionStatus: LiveData<Result<String>> get() = _taskSubmissionStatus
 
     fun getCurrentLocation(context: Context) {
-        if (ContextCompat.checkSelfPermission(context, android.Manifest.permission.ACCESS_FINE_LOCATION) == PackageManager.PERMISSION_GRANTED) {
+        if (ContextCompat.checkSelfPermission(
+                context,
+                android.Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             fusedLocationClient.lastLocation.addOnSuccessListener { loc ->
                 val location = if (loc != null) {
                     val geocoder = Geocoder(context, Locale.getDefault())
-                    val addressList: List<Address>? = geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
+                    val addressList: List<Address>? =
+                        geocoder.getFromLocation(loc.latitude, loc.longitude, 1)
                     val address = if (!addressList.isNullOrEmpty()) {
                         addressList[0].getAddressLine(0) // Get the full address
                     } else {
@@ -72,7 +78,8 @@ class AddTaskViewModel(application: Application) : AndroidViewModel(application)
         }
     }
 
-    fun validateInputs(title: String, date: String, time: String, description: String, locationText: String
+    fun validateInputs(
+        title: String, date: String, time: String, description: String, locationText: String
     ): Result<Map<String, String>> {
         val inputs = mapOf(
             "title" to title,
@@ -91,7 +98,12 @@ class AddTaskViewModel(application: Application) : AndroidViewModel(application)
         return Result.success(inputs)
     }
 
-    fun prepareTaskDetails(inputs: Map<String, String>, priority: Priority, category: Category, context: Context): Result<Task> {
+    fun prepareTaskDetails(
+        inputs: Map<String, String>,
+        priority: Priority,
+        category: Category,
+        context: Context
+    ): Result<Task> {
         val (title, date, time, description, locationText) = inputs.values.toList()
 
         val location = if (locationText.startsWith("Lat:")) {
@@ -112,7 +124,8 @@ class AddTaskViewModel(application: Application) : AndroidViewModel(application)
             val formattedDate = date.replace("/", "-")
             val taskId = databaseRef.push().key
             if (taskId != null) {
-                databaseRef.child("users").child(userId).child("tasks").child(formattedDate).child(taskId).setValue(task)
+                databaseRef.child("users").child(userId).child("tasks").child(formattedDate)
+                    .child(taskId).setValue(task)
                     .addOnSuccessListener {
                         _taskSubmissionStatus.value = Result.success("Task submitted successfully")
                     }
