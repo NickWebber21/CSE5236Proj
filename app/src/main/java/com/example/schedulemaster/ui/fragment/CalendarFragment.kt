@@ -76,7 +76,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
 
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
             error?.let {
-                Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
                 Log.e("CalendarFragment", it)
             }
         })
