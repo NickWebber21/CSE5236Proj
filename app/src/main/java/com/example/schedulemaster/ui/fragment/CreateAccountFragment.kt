@@ -88,7 +88,7 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
                     startActivity(intent)
                     break
                 }
-                delay(3000) // Check every 3 seconds
+                delay(3000)
             }
         }
     }

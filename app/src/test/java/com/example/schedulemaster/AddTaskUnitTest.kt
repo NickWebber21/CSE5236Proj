@@ -3,8 +3,8 @@ import org.junit.Assert.*
 
 //This is our current workaround solution for unit testing.
 //We could not get mocks working, so this is a test double.
-//Our test double is just the function we are testing rewritten in here.
-class TestApplication {
+//Our test double is just the function we are testing in the test.
+class ClassDouble {
     fun validateInputs(
         title: String, date: String, time: String, description: String, locationText: String): Result<Map<String, String>> {
         val inputs = mapOf(
@@ -25,10 +25,10 @@ class TestApplication {
     }
 }
 
-class InputValidationTest {
+class AddTaskUnitTest {
     @Test
     fun validateInputsSuccess() {
-        val testApp = TestApplication()
+        val testApp = ClassDouble()
         val result = testApp.validateInputs(
             "Title", "30/11/2024", "14:00", "Description", "Location"
         )
@@ -37,7 +37,7 @@ class InputValidationTest {
 
     @Test
     fun validateInputsFailure_EmptyTitle() {
-        val testApp = TestApplication()
+        val testApp = ClassDouble()
         val result = testApp.validateInputs(
             "", "30/11/2024", "14:00", "Description", "Location"
         )
@@ -46,7 +46,7 @@ class InputValidationTest {
 
     @Test
     fun validateInputsFailure_EmptyDate() {
-        val testApp = TestApplication()
+        val testApp = ClassDouble()
         val result = testApp.validateInputs(
             "Title", "", "14:00", "Description", "Location"
         )
@@ -55,7 +55,7 @@ class InputValidationTest {
 
     @Test
     fun validateInputsFailure_EmptyTime() {
-        val testApp = TestApplication()
+        val testApp = ClassDouble()
         val result = testApp.validateInputs(
             "Title", "30/11/2024", "", "Description", "Location"
         )
@@ -64,7 +64,7 @@ class InputValidationTest {
 
     @Test
     fun validateInputsFailure_EmptyDescription() {
-        val testApp = TestApplication()
+        val testApp = ClassDouble()
         val result = testApp.validateInputs(
             "Title", "30/11/2024", "14:00", "", "Location"
         )
@@ -73,7 +73,7 @@ class InputValidationTest {
 
     @Test
     fun validateInputsFailure_EmptyLocation() {
-        val testApp = TestApplication()
+        val testApp = ClassDouble()
         val result = testApp.validateInputs(
             "Title", "30/11/2024", "14:00", "Description", ""
         )
