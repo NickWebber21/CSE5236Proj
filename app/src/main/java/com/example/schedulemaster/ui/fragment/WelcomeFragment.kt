@@ -25,14 +25,11 @@ class WelcomeFragment : Fragment(), View.OnClickListener {
         savedInstanceState: Bundle?
     ): View {
         val v = inflater.inflate(R.layout.fragment_welcome, container, false)
-        //setup firebase auth
         auth = FirebaseAuth.getInstance()
-        //check if user is logged in already
         if (auth.currentUser != null) {
             val intent = Intent(requireContext(), CalendarActivity::class.java)
             startActivity(intent)
         }
-        //bind views
         mLoginButton = v.findViewById(R.id.loginButton)
         mLoginButton.setOnClickListener(this)
         mCreateAccountButton = v.findViewById(R.id.createAccountButton)

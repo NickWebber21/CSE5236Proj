@@ -70,12 +70,10 @@ class CalendarFragment : Fragment(), View.OnClickListener {
     }
 
     private fun observeViewModel() {
-        // Observe LiveData for tasks
         viewModel.tasks.observe(viewLifecycleOwner, Observer { tasks ->
             updateTaskContainer(tasks)
         })
 
-        // Observe LiveData for errors
         viewModel.errorMessage.observe(viewLifecycleOwner, Observer { error ->
             error?.let {
                 Toast.makeText(requireContext(), it, Toast.LENGTH_SHORT).show()
@@ -100,7 +98,6 @@ class CalendarFragment : Fragment(), View.OnClickListener {
         }
     }
 
-    //--------------------this function will be replaced by a recycler view later-------------------
     private fun addTaskToView(task: Task) {
         val taskLayout = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL

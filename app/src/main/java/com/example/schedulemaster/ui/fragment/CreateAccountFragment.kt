@@ -35,14 +35,12 @@ class CreateAccountFragment : Fragment(), View.OnClickListener {
     ): View {
         val v = inflater.inflate(R.layout.fragment_create_account, container, false)
 
-        // Bind views
         mEditUsernameText = v.findViewById(R.id.usernameText)
         mEditPasswordText = v.findViewById(R.id.passwordText)
         mCreateAccountButton = v.findViewById(R.id.createAccountButton)
         mWaitingText = v.findViewById(R.id.waitingText)
         mCreateAccountButton.setOnClickListener(this)
 
-        // Observe ViewModel
         viewModel.accountCreationStatus.observe(viewLifecycleOwner, Observer { result ->
             result.onSuccess { message ->
                 Toast.makeText(requireContext(), message, Toast.LENGTH_SHORT).show()

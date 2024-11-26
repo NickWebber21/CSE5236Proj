@@ -2,7 +2,6 @@ package com.example.schedulemaster.ui.fragment
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -15,7 +14,6 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
-import com.example.schedulemaster.model.Location
 import com.example.schedulemaster.R
 import com.example.schedulemaster.model.Category
 import com.example.schedulemaster.model.Priority
